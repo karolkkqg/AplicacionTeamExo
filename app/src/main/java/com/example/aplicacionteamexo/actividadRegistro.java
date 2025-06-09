@@ -1,0 +1,167 @@
+package com.example.aplicacionteamexo;
+
+import android.os.Bundle;
+import android.text.InputType;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.content.Intent;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import android.graphics.drawable.Drawable;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.aplicacionteamexo.data.api.UsuarioAPI;
+import com.example.aplicacionteamexo.data.modelo.UsuarioRegistro;
+import com.example.aplicacionteamexo.data.modelo.UsuarioRespuesta;
+import com.example.aplicacionteamexo.data.network.RetrofitClient;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class actividadRegistro extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.actividad_registro);
+
+        Spinner spinnerRol = findViewById(R.id.spinnerRol);
+        EditText etNombre = findViewById(R.id.etNombre);
+        EditText etNombreDeUsuario = findViewById(R.id.etNombreDeUsuario);
+        EditText etApellidos = findViewById(R.id.etApellidos);
+        EditText etCorreo = findViewById(R.id.etCorreo);
+        EditText etPassModerador = findViewById(R.id.etPassModerador);
+        Button btnRegistrarse = findViewById(R.id.btnRegistrarse);
+        LinearLayout contenedorPassModerador = findViewById(R.id.contenedorPassModerador);
+        TextView tvLabelModerador = findViewById(R.id.tvLabelModerador);
+
+        // Lista de roles
+        String[] roles = {"Fan", "Moderador", "Administrador"};
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, roles);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerRol.setAdapter(adapter);
+
+        // Listener para detectar cambios en el Spinner
+        spinnerRol.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String rolSeleccionado = parent.getItemAtPosition(position).toString();
+
+                if (rolSeleccionado.equals("Moderador")) {
+                    contenedorPassModerador.setVisibility(View.VISIBLE);
+                    tvLabelModerador.setText("Contraseña de moderador:");
+                } else if (rolSeleccionado.equals("Administrador")) {
+                    contenedorPassModerador.setVisibility(View.VISIBLE);
+                    tvLabelModerador.setText("Clave de administrador:");
+                } else {
+                    contenedorPassModerador.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                contenedorPassModerador.setVisibility(View.GONE);
+            }
+        });
+
+        // Mostrar/ocultar contraseña
+        EditText etPassword = findViewById(R.id.etPassword);
+        etPassword.setOnTouchListener((v, event) -> {
+            final int DRAWABLE_END = 2;
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (etPassword.getRight() - etPassword.getCompoundDrawables()[DRAWABLE_END].getBounds().width())) {
+
+                    if (etPassword.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                        etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        etPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_candado_abierto, 0);
+                    } else {
+                        etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        etPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_candado_cerrado, 0);
+                    }
+
+                    etPassword.setSelection(etPassword.length());
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        // Botón regresar
+        ImageButton btnRegresar = findViewById(R.id.btnRegresar);
+        btnRegresar.setOnClickListener(v -> {
+            Intent intent = new Intent(actividadRegistro.this, ActividadLogin.class);
+            startActivity(intent);
+            finish();
+        });
+
+        btnRegistrarse.setOnClickListener(v -> {
+            String nombre = etNombre.getText().toString().trim();
+            String apellidos = etApellidos.getText().toString().trim();
+            String correo = etCorreo.getText().toString().trim();
+            String password = etPassword.getText().toString().trim();
+            String rol = spinnerRol.getSelectedItem().toString();
+            String nombreUsuario = etNombreDeUsuario.getText().toString().trim();
+            String claveRol = etPassModerador.getText().toString().trim();
+
+            // Aquí puedes validar campos si quieres
+
+            UsuarioRegistro nuevoUsuario = new UsuarioRegistro(
+                    nombreUsuario, nombre, apellidos, correo, password, rol
+            );
+
+            UsuarioAPI api = RetrofitClient.getInstance().create(UsuarioAPI.class);
+            Call<UsuarioRespuesta> call = api.registrar(nuevoUsuario);
+
+            call.enqueue(new Callback<UsuarioRespuesta>() {
+                @Override
+                public void onResponse(Call<UsuarioRespuesta> call, Response<UsuarioRespuesta> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(getApplicationContext(), "Registro exitoso", Toast.LENGTH_LONG).show();
+                        // startActivity(new Intent(actividadRegistro.this, MainActivity.class));
+                    } else {
+                        int code = response.code();
+                        String mensaje;
+
+                        switch (code) {
+                            case 400:
+                                mensaje = "El correo ya está registrado. Ingrese otro.";
+                                break;
+                            case 500:
+                                mensaje = "Ha ocurdido un error con el servidor. Puede reportarlo";
+                                break;
+                            default:
+                                mensaje = "Error desconocido. Código: " + code;
+                                break;
+                        }
+
+                        Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UsuarioRespuesta> call, Throwable t) {
+                    Toast.makeText(getApplicationContext(), "Fallo: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        });
+    }
+}

@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+// Este es el paquete lógico dentro de gRPC
+package usuario;
+
+// Este es el paquete Java que define dónde se generará el código en tu app
+option java_package = "com.example.aplicacionteamexo.grpc";
+option java_multiple_files = true; // Esto es importante para generar LoginRequest, etc.
+
+service UsuarioService {
+  rpc Login (LoginRequest) returns (LoginResponse);
+  rpc Perfil (PerfilRequest) returns (PerfilResponse);
+}
+
+message LoginRequest {
+  string correo = 1;
+  string contrasena = 2;
+}
+
+message LoginResponse {
+  bool exito = 1;
+  string mensaje = 2;
+  string nombreUsuario = 3;
+  string token = 4;
+}
+
+message PerfilRequest {
+  int32 usuarioId = 1;
+}
+
+message PerfilResponse {
+  bool exito = 1;
+  string mensaje = 2;
+  UsuarioData usuario = 3;
+}
+
+message UsuarioData {
+  int32 usuarioId = 1;
+  string nombreUsuario = 2;
+  string nombre = 3;
+  string apellidos = 4;
+  string correo = 5;
+  string rol = 6;
+}

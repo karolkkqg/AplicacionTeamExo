@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:padding="24dp">
+
+    <!-- Barra superior con fondo morado -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="#53005D"
+        android:gravity="center_vertical">
+
+        <ImageButton
+            android:id="@+id/btnRegresar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/flecha_regreso"
+            android:background="@null"
+            android:contentDescription="Regresar"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Registro"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginStart="16dp"/>
+    </LinearLayout>
+
+    <!-- Campo: Nombre -->
+    <TextView android:text="Nombre de usuario:"
+        style="@style/LabelStyle"
+        android:layout_marginTop="16dp"/>
+    <EditText
+        android:id="@+id/etNombreDeUsuario"
+        style="@style/EditTextStyle"
+        android:hint="Nombre de usuario"
+        />
+
+    <!-- Campo: Nombre -->
+    <TextView android:text="Nombre:"
+        style="@style/LabelStyle"
+        android:layout_marginTop="16dp"/>
+    <EditText
+        android:id="@+id/etNombre"
+        style="@style/EditTextStyle"
+        android:hint="Nombre"
+         />
+
+    <!-- Apellidos -->
+    <TextView android:text="Apellidos:" style="@style/LabelStyle"/>
+    <EditText
+        android:id="@+id/etApellidos"
+        style="@style/EditTextStyle"
+        android:hint="Apellidos" />
+
+    <!-- Correo -->
+    <TextView android:text="Correo:" style="@style/LabelStyle"/>
+    <EditText
+        android:id="@+id/etCorreo"
+        style="@style/EditTextStyle"
+        android:inputType="textEmailAddress"
+        android:hint="Correo"/>
+
+    <!-- Contraseña -->
+    <TextView android:text="Contraseña:" style="@style/LabelStyle"/>
+    <EditText
+        android:id="@+id/etPassword"
+        style="@style/EditTextStyle"
+        android:hint="Contraseña"
+        android:inputType="textPassword"
+        android:drawableEnd="@drawable/ic_candado_cerrado"
+        android:paddingEnd="12dp"/>
+
+    <!-- Rol -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="8dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_person"
+            android:layout_marginEnd="4dp"/>
+
+        <TextView android:text="Rol:" style="@style/LabelStyle" />
+    </LinearLayout>
+
+    <Spinner
+        android:id="@+id/spinnerRol"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_spinner_morado"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Contraseña de moderador -->
+    <LinearLayout
+        android:id="@+id/contenedorPassModerador"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:id="@+id/tvLabelModerador"
+            android:text="Contraseña de moderador:"
+            style="@style/LabelStyle"/>
+
+        <EditText
+            android:id="@+id/etPassModerador"
+            style="@style/EditTextStyle"
+            android:inputType="textPassword"
+            android:hint="Contraseña"/>
+    </LinearLayout>
+
+    <!-- Botón Registrarse -->
+    <Button
+        android:id="@+id/btnRegistrarse"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Registrarse"
+        android:textColor="#53005D"
+        android:background="@drawable/boton_borde_morado"
+        android:layout_marginTop="24dp"/>
+</LinearLayout>
