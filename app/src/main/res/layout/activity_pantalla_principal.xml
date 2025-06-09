@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F3ECF7"
+    tools:context=".PantallaPrincipal">
+
+
+    <!-- Barra superior -->
+    <LinearLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="#4B0055"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Inicio"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btn_filtro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_filtro_blanco"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Filtrar" />
+    </LinearLayout>
+
+    <!-- Contenido central (puedes expandir aquí) -->
+    <FrameLayout
+        android:id="@+id/contenido_principal"
+        android:layout_below="@id/top_bar"
+        android:layout_above="@id/bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="16dp">
+
+        <!-- Aquí puedes poner otros elementos si deseas -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewPosts"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+
+    </FrameLayout>
+
+    <!-- Barra inferior (bottom bar) -->
+    <LinearLayout
+        android:id="@+id/bottom_bar"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="#4B0055"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="center_vertical">
+
+        <ImageButton
+            android:id="@+id/btn_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:contentDescription="Inicio"
+            android:src="@drawable/ic_casa_blanca" />
+
+
+        <EditText
+            android:id="@+id/editTextSearch"
+            android:layout_width="314dp"
+            android:layout_height="50dp"
+            android:layout_margin="16dp"
+            android:background="@drawable/rounded_edittext"
+            android:drawableEnd="@drawable/ic_busqueda_morado"
+            android:drawablePadding="10dp"
+            android:hint="Buscar"
+            android:inputType="text"
+            android:imeOptions="actionSearch"
+            android:paddingStart="16dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="12dp"
+            android:textColor="#4B0055"
+            android:textColorHint="#4B0055" />
+
+        <ImageButton
+            android:id="@+id/btn_perfil"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_cuenta_circulo_blanco"
+            android:background="@null"
+            android:contentDescription="Perfil" />
+    </LinearLayout>
+
+</RelativeLayout>

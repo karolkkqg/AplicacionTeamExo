@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:elevation="4dp"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <!-- Multimedia (imagen, audio o video) -->
+        <ImageView
+            android:id="@+id/img_multimedia"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background" />
+
+        <!-- Reacciones -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:paddingTop="4dp">
+
+            <ImageButton
+                android:id="@+id/btn_like"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Me gusta"
+                android:scaleType="centerInside"
+                android:padding="8dp"
+                android:src="@drawable/ic_like" />
+
+            <ImageButton
+                android:id="@+id/btn_emoji_heart"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Corazón"
+                android:scaleType="centerInside"
+                android:padding="8dp"
+                android:src="@drawable/ic_emoji_corazon" />
+
+            <ImageButton
+                android:id="@+id/btn_emoji_broken"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Corazón roto"
+                android:scaleType="centerInside"
+                android:padding="8dp"
+                android:src="@drawable/ic_emoji_corazon_roto" />
+
+            <ImageButton
+                android:id="@+id/btn_dislike"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="No me gusta"
+                android:scaleType="centerInside"
+                android:padding="8dp"
+                android:src="@drawable/ic_dislike" />
+
+
+            <ImageButton
+                android:id="@+id/btn_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_eliminar"
+                android:contentDescription="Eliminar"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_gravity="end"
+                android:visibility="gone"/> <!-- Solo visible si es moderador -->
+
+        </LinearLayout>
+
+        <!-- Comentarios -->
+        <EditText
+            android:id="@+id/et_comentario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:hint="Escribe un comentario..."
+            android:inputType="text" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

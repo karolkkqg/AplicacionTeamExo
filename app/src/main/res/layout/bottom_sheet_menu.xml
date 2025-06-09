@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutBottomSheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:color/white">
+
+    <!-- Opciones comunes -->
+    <TextView
+        android:id="@+id/optionVideos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Videos"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <TextView
+        android:id="@+id/optionImagenes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Imágenes"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <TextView
+        android:id="@+id/optionAudios"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Audios"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <!-- Solo para moderadores -->
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:visibility="gone"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/optionUsuarios"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lista de usuarios"
+        android:padding="12dp"
+        android:visibility="gone"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true" />
+</LinearLayout>

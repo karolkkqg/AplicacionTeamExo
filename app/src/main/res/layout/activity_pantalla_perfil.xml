@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutPerfil"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    tools:context=".PantallaPerfil">
+
+
+
+    <!-- Barra superior -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#4B0055">
+
+        <ImageButton
+            android:id="@+id/btnVolver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_atras_blanco" />
+
+        <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Perfil"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:layout_centerInParent="true"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnVerEstadisticas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/boton_morado"
+            android:text="Ver estadísticas"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:layout_alignParentEnd="true"
+            android:textAllCaps="false"
+            android:drawableLeft="@drawable/ic_estadistica_blanco"
+            android:drawablePadding="8dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:elevation="0dp"
+            android:stateListAnimator="@null"
+            android:translationZ="0dp"/>
+
+
+
+    </RelativeLayout>
+
+    <!-- Datos de perfil y botones en una sola fila -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        android:weightSum="1">
+
+        <!-- Sección izquierda: ícono + nombre -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_perfil"
+                android:contentDescription="Icono usuario" />
+
+            <TextView
+                android:id="@+id/tvNombreUsuario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NombreUsuario"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#4B0055"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <!-- Sección derecha: botones en vertical -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="end">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnEditarPerfil"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Editar perfil"
+                android:textColor="#4B0055"
+                android:textAllCaps="false"
+                android:background="@drawable/boton_morado_borde"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:layout_marginBottom="4dp"
+                android:stateListAnimator="@null" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSubirPublicacion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Subir publicación"
+                android:textColor="#4B0055"
+                android:textAllCaps="false"
+                android:background="@drawable/boton_morado_borde"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:stateListAnimator="@null" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#000000"
+        android:layout_marginVertical="8dp" />
+
+    <!-- Publicaciones del usuario -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPerfil"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:scrollbars="vertical" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerPublicaciones"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"/>
+</LinearLayout>

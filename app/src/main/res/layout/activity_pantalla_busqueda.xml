@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/publicaciones_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F3ECF7"
+    tools:context=".PantallaBusqueda">
+
+    <!-- Barra superior morada con campo de búsqueda -->
+    <LinearLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:background="#4B0055"
+        android:gravity="center_vertical"
+        android:padding="8dp">
+
+        <ImageButton
+            android:id="@+id/btn_atras"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_atras_blanco"
+            android:background="@null"
+            android:contentDescription="Atrás" />
+
+        <EditText
+            android:id="@+id/editTextSearch"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:drawableEnd="@drawable/ic_busqueda_morado"
+            android:hint="Buscar"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textColor="#4B0055"
+            android:textColorHint="#4B0055" />
+
+        <ImageButton
+            android:id="@+id/btn_filtro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_filtro_blanco"
+            android:background="@null"
+            android:contentDescription="Filtrar" />
+    </LinearLayout>
+
+    <!-- Contenido principal con publicaciones -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPublicaciones"
+        android:layout_below="@id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="12dp"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp" />
+
+</RelativeLayout>
