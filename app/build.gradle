@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id 'com.google.protobuf'
 }
 
 android {
@@ -25,6 +26,31 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.25.3'
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.61.0'
+        }
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                java {
+                    option 'lite' // Usa esto solo si estás usando 'protobuf-javalite'
+                }
+            }
+            task.plugins {
+                grpc {
+                    option 'lite' // Asegura compatibilidad con Android y javalite
+                }
+            }
+        }
     }
 }
 
