@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="vertical"
+    android:fadeScrollbars="true">
+
+    <LinearLayout
+        android:id="@+id/layoutContenedor"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="#53005D"
+            android:gravity="center_vertical">
+
+            <ImageButton
+                android:id="@+id/btnRegresar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/flecha_regreso"
+                android:background="@null"
+                android:contentDescription="Regresar" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Estadísticas"
+                android:textSize="20sp"
+                android:textColor="#FFFFFF"
+                android:layout_marginStart="16dp" />
+        </LinearLayout>
+
+        <!-- Texto simple -->
+        <TextView
+            android:id="@+id/txtTotalPublicaciones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Total publicaciones:"
+            android:paddingTop="16dp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="8dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_calendario"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Ícono de calendario" />
+
+            <TextView
+                android:id="@+id/txtDiaMasActivo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Día con más publicaciones:" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtNotificaciones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Notificaciones pendientes:" />
+
+        <!-- Tabla para recursos por tipo -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Recursos por tipo:"
+            android:paddingTop="16dp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:id="@+id/tablaRecursos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*"
+            android:paddingTop="8dp">
+        </TableLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="16dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_megusta"
+            android:contentDescription="Ícono de likes"
+            android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Publicación con más Likes:"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtTopLikes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ID: --, Total: --" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="8dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_comentario"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Ícono de comentario" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Publicación con más Comentarios:"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtTituloTopLikes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Título: --"
+            android:textStyle="italic"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/txtTituloTopComentarios"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Título: --"
+            android:textStyle="italic"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/txtTopComentarios"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ID: --, Total: --" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="16dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_usuario"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Ícono de usuario" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Usuario más activo por publicaciones:"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtUsuarioTopPublicaciones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nombre: --" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="8dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_usuario"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Ícono de usuario" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Usuario con más reacciones:"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtUsuarioTopReacciones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nombre: --" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="8dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_usuario"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Ícono de usuario" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Usuario con más comentarios:"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtUsuarioTopComentarios"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nombre: --" />
+
+        <!-- Gráfica circular -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Distribución de recursos"
+            android:paddingTop="16dp"
+            android:textStyle="bold" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/miPieChart"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+</ScrollView>

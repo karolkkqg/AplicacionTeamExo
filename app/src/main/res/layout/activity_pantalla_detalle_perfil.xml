@@ -1,122 +1,118 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:background="#FFFFFF">
+    android:fillViewport="true">
 
-    <!-- Título -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="#53005D"
-        android:gravity="center_vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:background="#FFFFFF">
 
-        <ImageButton
-            android:id="@+id/btnRegresar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/flecha_regreso"
-            android:background="@null"
-            android:contentDescription="Regresar"/>
+        <!-- Título -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="#53005D"
+            android:gravity="center_vertical">
 
+            <ImageButton
+                android:id="@+id/btnRegresar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/flecha_regreso"
+                android:background="@null"
+                android:contentDescription="Regresar" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Perfil"
+                android:textSize="20sp"
+                android:textColor="#FFFFFF"
+                android:layout_marginStart="16dp" />
+        </LinearLayout>
+
+        <!-- Campos de texto -->
+        <TextView android:text="Nombre de usuario:"
+            style="@style/LabelStyle"
+            android:layout_marginTop="16dp" />
+        <EditText
+            android:id="@+id/etNombreUsuario"
+            style="@style/EditTextStyle"
+            android:hint="Nombre de usuario"
+            android:inputType="textPersonName" />
+
+        <TextView android:text="Nombre:"
+            style="@style/LabelStyle"
+            android:layout_marginTop="16dp" />
+        <EditText
+            android:id="@+id/etNombre"
+            style="@style/EditTextStyle"
+            android:hint="Nombre" />
+
+        <TextView android:text="Apellidos:" style="@style/LabelStyle" />
+        <EditText
+            android:id="@+id/etApellidos"
+            style="@style/EditTextStyle"
+            android:hint="Apellidos" />
+
+        <TextView android:text="Correo:" style="@style/LabelStyle" />
+        <EditText
+            android:id="@+id/etCorreo"
+            style="@style/EditTextStyle"
+            android:hint="Correo"
+            android:inputType="textEmailAddress" />
+
+        <!-- Rol (recuadro morado no editable) -->
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tvRol"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Perfil"
-            android:textSize="20sp"
+            android:text="Moderador"
+            android:padding="12dp"
+            android:layout_marginTop="8dp"
             android:textColor="#FFFFFF"
-            android:layout_marginStart="16dp"/>
+            android:background="@drawable/bg_rol_morado"
+            android:gravity="center_vertical"
+            android:drawablePadding="8dp" />
+
+        <!-- Botones -->
+        <Button
+            android:id="@+id/btnEditarPerfil"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Editar perfil"
+            android:background="@drawable/boton_borde_morado"
+            android:textColor="#4B0082"
+            android:layout_marginTop="24dp" />
+
+        <Button
+            android:id="@+id/btnMostrarEditarContrasena"
+            android:text="Editar contraseña"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFF"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#53005D" />
+
+        <EditText
+            android:id="@+id/etContrasena"
+            style="@style/EditTextStyle"
+            android:hint="Contraseña"
+            android:inputType="textPassword"
+            android:drawableEnd="@drawable/ic_candado_cerrado"
+            android:paddingEnd="12dp"
+            android:layout_marginTop="24dp"/>
+
+        <Button
+            android:id="@+id/btnGuardarContrasena"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Aceptar"
+            android:background="@drawable/boton_borde_morado"
+            android:textColor="#4B0082"
+            android:layout_marginTop="24dp" />
     </LinearLayout>
-
-    <!-- Campos de texto -->
-    <EditText
-        android:id="@+id/etNombreUsuario"
-        android:layout_height="48dp"
-        android:layout_width="match_parent"
-        android:hint="Nombre de usuario"
-        android:enabled="false"
-        android:inputType="textPersonName" />
-
-    <EditText
-        android:id="@+id/etNombre"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Nombre" />
-
-    <EditText
-        android:id="@+id/etApellidos"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Apellidos" />
-
-    <EditText
-        android:id="@+id/etCorreo"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Correo"
-        android:inputType="textEmailAddress" />
-
-    <!-- Rol (recuadro morado no editable) -->
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Rol"
-        android:padding="12dp"
-        android:layout_marginTop="8dp"
-        android:textColor="@color/black"
-
-        android:gravity="center_vertical"
-        android:drawableStart="@drawable/ic_person"
-        android:drawablePadding="8dp" />
-
-    <TextView
-        android:id="@+id/tvRol"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Moderador"
-        android:padding="12dp"
-        android:layout_marginTop="8dp"
-        android:textColor="#FFFFFF"
-        android:background="@drawable/bg_rol_morado"
-        android:gravity="center_vertical"
-        android:drawablePadding="8dp" />
-
-    <!-- Botón -->
-    <Button
-        android:id="@+id/btnEditarPerfil"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Editar perfil"
-        android:background="@drawable/boton_borde_morado"
-        android:textColor="#4B0082"
-        android:layout_marginTop="24dp" />
-
-    <Button
-        android:id="@+id/btnMostrarEditarContrasena"
-        android:text="Editar contraseña"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFF"
-        android:layout_marginTop="24dp"
-        android:backgroundTint="#53005D"/>
-
-    <EditText
-        android:id="@+id/etContrasena"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Contraseña"
-        android:inputType="textPassword"
-        android:layout_marginTop="40dp"/>
-
-    <Button
-        android:id="@+id/btnGuardarContrasena"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Editar"
-        android:background="@drawable/boton_borde_morado"
-        android:textColor="#4B0082"
-        android:layout_marginTop="24dp" />
-
-</LinearLayout>
+</ScrollView>

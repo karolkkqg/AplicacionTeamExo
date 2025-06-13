@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.aplicacionteamexo.grpc.LoginRequest;
 import com.example.aplicacionteamexo.grpc.LoginResponse;
 import com.example.aplicacionteamexo.grpc.UsuarioServiceGrpc;
+import com.example.aplicacionteamexo.utils.Validador;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -31,7 +32,7 @@ public class ActividadLogin extends AppCompatActivity {
         Button btnIniciarSesion = findViewById(R.id.btnIniciarSesion);
         Button btnRegistrarse = findViewById(R.id.btnRegistrarse);
 
-        // Mostrar u ocultar la contraseña al tocar el ícono
+        // Mostrar u ocultar la contraseña
         etPassword.setOnTouchListener((v, event) -> {
             final int DRAWABLE_END = 2;
             if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -50,26 +51,32 @@ public class ActividadLogin extends AppCompatActivity {
             return false;
         });
 
-        // Navegar al registro
         btnRegistrarse.setOnClickListener(v -> {
             Intent intent = new Intent(ActividadLogin.this, actividadRegistro.class);
             startActivity(intent);
         });
 
-        // Ejecutar login al dar clic en "Iniciar sesión"
         btnIniciarSesion.setOnClickListener(v -> {
             String correo = etCorreo.getText().toString().trim();
             String contrasena = etPassword.getText().toString();
 
-            if (correo.isEmpty() || contrasena.isEmpty()) {
-                Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
+            StringBuilder errores = new StringBuilder();
+
+            String errCorreo = Validador.validarCorreo(correo);
+            if (errCorreo != null) errores.append("- ").append(errCorreo).append("\n");
+
+            String errPass = Validador.validarPassword(contrasena);
+            if (errPass != null) errores.append("- ").append(errPass).append("\n");
+
+            if (errores.length() > 0) {
+                Toast.makeText(getApplicationContext(), errores.toString(), Toast.LENGTH_LONG).show();
                 return;
             }
 
             new Thread(() -> {
                 try {
                     ManagedChannel channel = ManagedChannelBuilder
-                            .forAddress("192.168.0.108", 50051) // IP y puerto del servidor gRPC
+                            .forAddress("192.168.0.157", 50051)
                             .usePlaintext()
                             .build();
 
@@ -85,18 +92,20 @@ public class ActividadLogin extends AppCompatActivity {
                     runOnUiThread(() -> {
                         if (response.getExito()) {
                             String token = response.getToken();
-                            String mensaje = response.getMensaje();
+                            int usuarioId = response.getUsuarioId();
 
                             getSharedPreferences("auth", MODE_PRIVATE)
                                     .edit()
                                     .putString("token", token)
+                                    .putInt("usuarioId", usuarioId)
                                     .apply();
 
-                            Toast.makeText(this, "Inicio de sesión exitoso: " + mensaje, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
 
-                            // Redirigir a pantalla principal si deseas
-                            // startActivity(new Intent(this, ActividadPrincipal.class));
-                            // finish();
+                            Intent intent = new Intent(this, PantallaSubirPost.class);
+                            startActivity(intent);
+                            finish();
+
                         } else {
                             Toast.makeText(this, "Error: " + response.getMensaje(), Toast.LENGTH_SHORT).show();
                         }
@@ -107,7 +116,8 @@ public class ActividadLogin extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                     runOnUiThread(() ->
-                            Toast.makeText(this, "Error de conexión con el servidor", Toast.LENGTH_SHORT).show());
+                            Toast.makeText(this, "Error de conexión con el servidor", Toast.LENGTH_SHORT).show()
+                    );
                 }
             }).start();
         });

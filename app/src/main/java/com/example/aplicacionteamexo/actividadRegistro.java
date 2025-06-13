@@ -27,6 +27,7 @@ import com.example.aplicacionteamexo.data.api.UsuarioAPI;
 import com.example.aplicacionteamexo.data.modelo.UsuarioRegistro;
 import com.example.aplicacionteamexo.data.modelo.UsuarioRespuesta;
 import com.example.aplicacionteamexo.data.network.RetrofitClient;
+import com.example.aplicacionteamexo.utils.Validador;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +53,6 @@ public class actividadRegistro extends AppCompatActivity {
         LinearLayout contenedorPassModerador = findViewById(R.id.contenedorPassModerador);
         TextView tvLabelModerador = findViewById(R.id.tvLabelModerador);
 
-        // Lista de roles
         String[] roles = {"Fan", "Moderador", "Administrador"};
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -60,7 +60,6 @@ public class actividadRegistro extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerRol.setAdapter(adapter);
 
-        // Listener para detectar cambios en el Spinner
         spinnerRol.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -83,7 +82,6 @@ public class actividadRegistro extends AppCompatActivity {
             }
         });
 
-        // Mostrar/ocultar contraseña
         EditText etPassword = findViewById(R.id.etPassword);
         etPassword.setOnTouchListener((v, event) -> {
             final int DRAWABLE_END = 2;
@@ -105,7 +103,6 @@ public class actividadRegistro extends AppCompatActivity {
             return false;
         });
 
-        // Botón regresar
         ImageButton btnRegresar = findViewById(R.id.btnRegresar);
         btnRegresar.setOnClickListener(v -> {
             Intent intent = new Intent(actividadRegistro.this, ActividadLogin.class);
@@ -122,7 +119,43 @@ public class actividadRegistro extends AppCompatActivity {
             String nombreUsuario = etNombreDeUsuario.getText().toString().trim();
             String claveRol = etPassModerador.getText().toString().trim();
 
-            // Aquí puedes validar campos si quieres
+            StringBuilder errores = new StringBuilder();
+
+            String errNombre = Validador.validarNombre(nombre, "Nombre");
+            if (errNombre != null) errores.append("- ").append(errNombre).append("\n");
+
+            String errApellidos = Validador.validarNombre(apellidos, "Apellidos");
+            if (errApellidos != null) errores.append("- ").append(errApellidos).append("\n");
+
+            String errUsuario = Validador.validarNombreDeUsuario(nombreUsuario);
+            if (errUsuario != null) errores.append("- ").append(errUsuario).append("\n");
+
+            String errCorreo = Validador.validarCorreo(correo);
+            if (errCorreo != null) errores.append("- ").append(errCorreo).append("\n");
+
+            String errPass = Validador.validarPassword(password);
+            if (errPass != null) errores.append("- ").append(errPass).append("\n");
+
+            if (!rol.equals("Moderador")) {
+                if (claveRol.isEmpty()) {
+                    errores.append("- La clave del rol no puede estar vacía.\n");
+                } else if (!claveRol.equals("uwo193d")) {
+                    errores.append("- Clave incorrecta para el rol seleccionado.\n");
+                }
+            }
+
+            if (!rol.equals("Admnistrador")) {
+                if (claveRol.isEmpty()) {
+                    errores.append("- La clave del rol no puede estar vacía.\n");
+                } else if (!claveRol.equals("29dmao2")) {
+                    errores.append("- Clave incorrecta para el rol seleccionado.\n");
+                }
+            }
+
+            if (errores.length() > 0) {
+                Toast.makeText(getApplicationContext(), errores.toString(), Toast.LENGTH_LONG).show();
+                return;
+            }
 
             UsuarioRegistro nuevoUsuario = new UsuarioRegistro(
                     nombreUsuario, nombre, apellidos, correo, password, rol
@@ -136,7 +169,14 @@ public class actividadRegistro extends AppCompatActivity {
                 public void onResponse(Call<UsuarioRespuesta> call, Response<UsuarioRespuesta> response) {
                     if (response.isSuccessful()) {
                         Toast.makeText(getApplicationContext(), "Registro exitoso", Toast.LENGTH_LONG).show();
-                        // startActivity(new Intent(actividadRegistro.this, MainActivity.class));
+                        limpiarCampos(
+                                etNombre,
+                                etNombreDeUsuario,
+                                etApellidos,
+                                etCorreo,
+                                etPassword,
+                                etPassModerador
+                        );
                     } else {
                         int code = response.code();
                         String mensaje;
@@ -163,5 +203,10 @@ public class actividadRegistro extends AppCompatActivity {
                 }
             });
         });
+    }
+    private void limpiarCampos(EditText... campos) {
+        for (EditText campo : campos) {
+            campo.setText("");
+        }
     }
 }

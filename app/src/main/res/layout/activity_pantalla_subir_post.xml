@@ -1,0 +1,81 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="#53005D"
+            android:gravity="center_vertical">
+
+            <ImageButton
+                android:id="@+id/btnRegresar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/flecha_regreso"
+                android:background="@null"
+                android:contentDescription="Regresar" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Subir post"
+                android:textSize="20sp"
+                android:textColor="#FFFFFF"
+                android:layout_marginStart="16dp" />
+        </LinearLayout>
+
+        <TextView android:text="📝 Título de la publicación:"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"/>
+        <EditText android:id="@+id/tituloEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView android:text="📄 Descripción:"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>/>
+        <EditText android:id="@+id/descripcionEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView android:text="📁 Seleccionar archivo:"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+        <Button
+            android:id="@+id/btnSeleccionarArchivo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Elegir archivo"
+            android:textColor="#874E90"
+            android:background="@drawable/boton_borde_blanco"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/archivoSeleccionadoTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ningún archivo seleccionado"
+            android:textColor="#666666"
+            android:textStyle="italic"
+            android:paddingTop="16dp"/>
+
+        <Button
+            android:id="@+id/subirPublicacionBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📤 Subir publicación"
+            android:backgroundTint="#53005D"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="20dp"/>
+
+    </LinearLayout>
+</ScrollView>

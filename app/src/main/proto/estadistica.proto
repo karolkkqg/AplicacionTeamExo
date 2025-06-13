@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package estadistica;
+
+/**
+ * Servicio para obtener estadísticas relacionadas con las publicaciones,
+ * interacciones, usuarios y notificaciones.
+ */
+service EstadisticasService {
+  rpc ObtenerEstadisticas (EstadisticasRequest) returns (EstadisticasResponse);
+}
+
+/**
+ * Solicitud vacía para obtener estadísticas generales.
+ */
+message EstadisticasRequest {}
+
+/**
+ * Estructura básica para publicaciones destacadas.
+ */
+message TopPublicacion {
+  int32 publicacionId = 1;
+  int32 total = 2;
+}
+
+/**
+ * Conteo por tipo (por ejemplo: fotos, videos, audios).
+ */
+message ConteoPorTipo {
+  string tipo = 1;
+  int32 total = 2;
+}
+
+/**
+ * Respuesta completa con estadísticas agregadas del sistema.
+ */
+message EstadisticasResponse {
+  TopPublicacion topLikes = 1;
+  TopPublicacion topComentarios = 2;
+
+  int32 totalPublicaciones = 3;
+  string diaConMasPublicaciones = 4;
+  int32 publicacionesEnEseDia = 5;
+
+  int32 usuarioTopPublicaciones = 6;
+  int32 usuarioTopReacciones = 7;
+  int32 usuarioTopComentarios = 8;
+
+  repeated ConteoPorTipo recursosPorTipo = 9;
+
+  int32 notificacionesPendientes = 10;
+}
