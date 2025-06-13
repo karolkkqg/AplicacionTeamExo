@@ -16,13 +16,16 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".PantallaPublicacion"
+            android:exported="false" />
+        <activity
             android:name=".PantallaDetallePerfil"
             android:exported="false" />
         <activity
             android:name=".PantallaPerfil"
             android:exported="false" />
         <activity
-            android:name=".PantallaBusqueda"
+            android:name=".ActividadBusqueda"
             android:exported="false" />
         <activity
             android:name=".PantallaPrincipal"

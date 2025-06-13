@@ -97,6 +97,25 @@ public class ActividadLogin extends AppCompatActivity {
                             // Redirigir a pantalla principal si deseas
                             // startActivity(new Intent(this, ActividadPrincipal.class));
                             // finish();
+                            String nombreUsuario = response.getNombreUsuario(); // 👈 así obtienes el nombre de usuario
+
+                            // Puedes guardarlo si lo necesitas luego
+                            getSharedPreferences("auth", MODE_PRIVATE)
+                                    .edit()
+                                    .putString("nombreUsuario", nombreUsuario)
+                                    .apply();
+
+                            String rol = response.getRol(); // 👈 Obtener rol
+                            int usuarioId = response.getUsuarioId(); // 👈 Obtener usuarioId
+
+                            getSharedPreferences("auth", MODE_PRIVATE)
+                                    .edit()
+                                    .putString("token", token)
+                                    .putString("nombreUsuario", nombreUsuario)
+                                    .putString("rol", rol) // 👈 Guardar rol
+                                    .putInt("usuarioId", usuarioId) // 👈 Guardar usuarioId
+                                    .apply();
+
                         } else {
                             Toast.makeText(this, "Error: " + response.getMensaje(), Toast.LENGTH_SHORT).show();
                         }

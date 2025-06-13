@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F3ECF7"
-    tools:context=".PantallaBusqueda">
+    tools:context=".ActividadBusqueda">
 
     <!-- Barra superior morada con campo de búsqueda -->
     <LinearLayout

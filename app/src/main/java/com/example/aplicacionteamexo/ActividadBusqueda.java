@@ -1,13 +1,12 @@
 package com.example.aplicacionteamexo;
 
+import static java.security.AccessController.getContext;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -23,6 +22,7 @@ import com.example.aplicacionteamexo.data.repositorio.PublicacionRepository;
 import com.example.aplicacionteamexo.utilidades.OnPublicacionInteractionListener;
 import com.example.aplicacionteamexo.utilidades.PublicacionAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -30,88 +30,81 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PantallaPerfil extends AppCompatActivity implements OnPublicacionInteractionListener {
+public class ActividadBusqueda extends AppCompatActivity implements OnPublicacionInteractionListener {
 
-    private TextView tvNombreUsuario;
-    private Button btnEditarPerfil, btnSubirPublicacion;
-    private RecyclerView recyclerPublicaciones;
-    private PublicacionAdapter publicacionAdapter;
-    private List<Publicacion> listaPosts;
-    private boolean esModerador;
-    private int usuarioId;
-    private PublicacionRepository publicacionRepository;
     private List<Publicacion> listaPublicaciones;
+    private PublicacionAdapter publicacionAdapter;
+    private boolean esModerador;
+    private PublicacionRepository publicacionRepository;
+    private String queryBusqueda;
 
     private SharedPreferences sharedPreferences;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        sharedPreferences = getSharedPreferences("auth", MODE_PRIVATE);
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pantalla_perfil);
+        setContentView(R.layout.activity_pantalla_busqueda);
 
         publicacionRepository = new PublicacionRepository();
-        obtenerDatosUsuario();
-        inicializarVistas();
-        configurarBotones();
-        cargarPublicacionesUsuario();
+        obtenerDatosIntent();
+        configurarRecyclerView();
+        configurarBotonAtras();
+        buscarPublicaciones();
     }
 
-    private void obtenerDatosUsuario() {
-        SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
-        String nombreUsuario = prefs.getString("nombreUsuario", "Usuario");
-        String rolUsuario = prefs.getString("rol", "fan");
+    private void obtenerDatosIntent() {
+        esModerador = getIntent().getBooleanExtra("esModerador", false);
+        queryBusqueda = getIntent().getStringExtra("query");
 
-        usuarioId = prefs.getInt("usuarioId", -1);
-        esModerador = rolUsuario.equalsIgnoreCase("moderador");
-        tvNombreUsuario.setText(nombreUsuario);
+        // Refuerzo por string si llega como texto
+        String rolUsuario = getIntent().getStringExtra("rol");
+        if (rolUsuario != null && rolUsuario.equalsIgnoreCase("Moderador")) {
+            esModerador = true;
+        }
     }
 
-    private void inicializarVistas() {
-        tvNombreUsuario = findViewById(R.id.tvNombreUsuario);
-        btnEditarPerfil = findViewById(R.id.btnEditarPerfil);
-        btnSubirPublicacion = findViewById(R.id.btnSubirPublicacion);
-        recyclerPublicaciones = findViewById(R.id.recyclerPublicaciones);
+    private void configurarRecyclerView() {
+        RecyclerView recyclerView = findViewById(R.id.recyclerViewPublicaciones);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        Button btnVerEstadisticas = findViewById(R.id.btnVerEstadisticas);
-        btnVerEstadisticas.setVisibility(esModerador ? View.VISIBLE : View.GONE);
+        listaPublicaciones = new ArrayList<>();
+        publicacionAdapter = new PublicacionAdapter(listaPublicaciones, esModerador, this, this);
+        recyclerView.setAdapter(publicacionAdapter);
     }
 
-    private void configurarBotones() {
-        ImageButton btnAtras = findViewById(R.id.btnVolver);
+    private void configurarBotonAtras() {
+        ImageButton btnAtras = findViewById(R.id.btn_atras);
         btnAtras.setOnClickListener(v -> finish());
-
-        btnEditarPerfil.setOnClickListener(v ->
-                Toast.makeText(this, "Editar perfil aún no implementado", Toast.LENGTH_SHORT).show());
-
-        btnSubirPublicacion.setOnClickListener(v -> {
-            Intent intent = new Intent(this, PantallaPublicacion.class);
-            intent.putExtra("usuarioId", usuarioId);
-            startActivity(intent);
-        });
-
-        findViewById(R.id.btnVerEstadisticas).setOnClickListener(v ->
-                Toast.makeText(this, "Ver estadísticas (pendiente)", Toast.LENGTH_SHORT).show());
     }
 
-    private void cargarPublicacionesUsuario() {
-        publicacionRepository.obtenerPorUsuario(usuarioId).enqueue(new Callback<List<Publicacion>>() {
-            @Override
-            public void onResponse(Call<List<Publicacion>> call, Response<List<Publicacion>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    listaPosts = response.body();
-                    publicacionAdapter = new PublicacionAdapter(listaPosts, esModerador, PantallaPerfil.this, PantallaPerfil.this);
-                    recyclerPublicaciones.setLayoutManager(new LinearLayoutManager(PantallaPerfil.this));
-                    recyclerPublicaciones.setAdapter(publicacionAdapter);
-                } else {
-                    Toast.makeText(PantallaPerfil.this, "Error al obtener publicaciones", Toast.LENGTH_SHORT).show();
-                }
-            }
+    private void buscarPublicaciones() {
+        if (queryBusqueda != null && !queryBusqueda.isEmpty()) {
+            publicacionRepository.buscarPublicaciones(queryBusqueda, "activo", 20, 1)
+                    .enqueue(new Callback<List<Publicacion>>() {
+                        @Override
+                        public void onResponse(Call<List<Publicacion>> call, Response<List<Publicacion>> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                listaPublicaciones.clear();
+                                listaPublicaciones.addAll(response.body());
+                                publicacionAdapter.notifyDataSetChanged();
 
-            @Override
-            public void onFailure(Call<List<Publicacion>> call, Throwable t) {
-                Toast.makeText(PantallaPerfil.this, "Fallo de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                                if (listaPublicaciones.isEmpty()) {
+                                    Toast.makeText(ActividadBusqueda.this, "No se encontraron resultados", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(ActividadBusqueda.this, "Error en la búsqueda", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<Publicacion>> call, Throwable t) {
+                            Toast.makeText(ActividadBusqueda.this, "Error de conexión", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
     }
 
     // Implementación de OnPublicacionInteractionListener
@@ -132,7 +125,7 @@ public class PantallaPerfil extends AppCompatActivity implements OnPublicacionIn
 
     @Override
     public void onReaccionClick(Publicacion publicacion, String tipoReaccion) {
-        Toast.makeText(this, "Reacción " + tipoReaccion, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Reacción: " + tipoReaccion, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -152,7 +145,7 @@ public class PantallaPerfil extends AppCompatActivity implements OnPublicacionIn
             @Override
             public void onResponse(Call<Comentario> call, Response<Comentario> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(PantallaPerfil.this, "Comentario publicado", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ActividadBusqueda.this, "Comentario publicado", Toast.LENGTH_SHORT).show();
 
                     // Agregar comentario localmente en el modelo
                     publicacion.agregarComentarioTexto(response.body().getTexto());
@@ -160,17 +153,19 @@ public class PantallaPerfil extends AppCompatActivity implements OnPublicacionIn
                     // Notificar al adaptador para que se actualice el ítem
                     publicacionAdapter.notifyItemChanged(listaPublicaciones.indexOf(publicacion));
                 } else {
-                    Toast.makeText(PantallaPerfil.this, "Error al publicar", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ActividadBusqueda.this, "Error al publicar", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Comentario> call, Throwable t) {
                 Log.e("Comentario", "Error al comentar", t);
-                Toast.makeText(PantallaPerfil.this, "Error al comentar", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActividadBusqueda.this, "Error al comentar", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+
 
     @Override
     public void onPublicacionClick(Publicacion publicacion) {
@@ -185,17 +180,17 @@ public class PantallaPerfil extends AppCompatActivity implements OnPublicacionIn
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.isSuccessful()) {
-                            listaPosts.remove(publicacion);
+                            listaPublicaciones.remove(publicacion);
                             publicacionAdapter.notifyDataSetChanged();
-                            Toast.makeText(PantallaPerfil.this, "Publicación eliminada", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ActividadBusqueda.this, "Publicación eliminada", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(PantallaPerfil.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ActividadBusqueda.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
-                        Toast.makeText(PantallaPerfil.this, "Error de red", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ActividadBusqueda.this, "Error de red", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

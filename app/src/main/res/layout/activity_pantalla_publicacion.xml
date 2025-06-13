@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/main"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <!-- Barra superior -->
+    <LinearLayout
+        android:id="@+id/top_bar"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:background="#4B0055"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageButton
+            android:id="@+id/btn_atras"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@null"
+            android:src="@drawable/ic_atras_blanco"
+            android:contentDescription="Atrás" />
+
+        <TextView
+            android:id="@+id/txt_titulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Publicación"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <!-- Caja de texto para Título -->
+    <EditText
+        android:id="@+id/editTextTitulo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Escribe un título..."
+        android:background="@android:drawable/edit_text"
+        android:padding="12dp"
+        android:textColor="#000000"
+        android:textColorHint="#999999"
+        android:inputType="textCapSentences"
+        app:layout_constraintTop_toBottomOf="@+id/top_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Caja de texto para Comentario -->
+    <EditText
+        android:id="@+id/editTextComentario"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Escribe un comentario..."
+        android:background="@android:drawable/edit_text"
+        android:padding="12dp"
+        android:gravity="top|start"
+        android:textColor="#000000"
+        android:textColorHint="#999999"
+        android:inputType="textMultiLine"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTitulo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Contenedor para "Adjunta un recurso:" e iconos -->
+    <LinearLayout
+        android:id="@+id/layout_adjuntar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@+id/editTextComentario"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Texto a la izquierda -->
+        <TextView
+            android:id="@+id/txt_adjunta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Adjunta un recurso:"
+            android:textColor="#4B0055"
+            android:textSize="16sp" />
+
+        <!-- Espacio flexible para separar texto e iconos -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Iconos alineados a la derecha -->
+        <LinearLayout
+            android:id="@+id/layout_recursos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btn_video"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:src="@drawable/ic_video_morado"
+                android:contentDescription="Adjuntar video" />
+
+            <ImageButton
+                android:id="@+id/btn_imagen"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:background="@null"
+                android:src="@drawable/ic_imagen_morado"
+                android:contentDescription="Adjuntar imagen" />
+
+            <ImageButton
+                android:id="@+id/btn_audio"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:background="@null"
+                android:src="@drawable/ic_audio_morado"
+                android:contentDescription="Adjuntar audio" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Botón Publicar -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_publicar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/boton_morado"
+        android:text="Publicar"
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@+id/layout_adjuntar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Agregar debajo del layout_adjuntar -->
+    <TextView
+        android:id="@+id/txt_archivo_seleccionado"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textColor="#4B0055"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/layout_adjuntar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package proto;
+
+// 👇 Esto genera las clases Java en el paquete correcto
+option java_package = "com.example.aplicacionteamexo.grpc.recurso";
+option java_multiple_files = true;
+
+service RecursoService {
+  rpc CrearRecurso (CrearRecursoRequest) returns (CrearRecursoResponse);
+  rpc DescargarRecurso (DescargarRecursoRequest) returns (DescargarRecursoResponse);
+}
+
+message CrearRecursoRequest {
+  string tipo = 1;             // Tipo de recurso: "Foto", "Video" o "Audio"
+  int32 identificador = 2;     // Identificador único del recurso
+  int32 formato = 3;           // Formato del archivo (por ejemplo, 1 = jpg, 2 = mp3, 3 = mp4)
+  int32 tamano = 4;            // Tamaño en bytes del archivo
+  string url = 5;              // URL de acceso público al recurso (puede ser generado después)
+  int32 usuarioId = 6;         // ID del usuario que subió el recurso
+
+  oneof especifico {
+    int32 resolucion = 7;      // Resolución (solo para Fotos y Videos)
+    int32 duracion = 8;        // Duración en segundos (solo para Audios)
+  }
+
+  bytes archivo = 9;           // Contenido binario del archivo
+}
+
+message CrearRecursoResponse {
+  bool exito = 1;              // true si el recurso fue creado exitosamente
+  string mensaje = 2;          // Mensaje descriptivo del resultado
+}
+
+message DescargarRecursoRequest {
+  string tipo = 1;             // Tipo de recurso ("Foto", "Video", "Audio")
+  int32 identificador = 2;     // ID único del recurso a descargar
+}
+
+
+message DescargarRecursoResponse {
+  bool exito = 1;              // true si el recurso fue encontrado y enviado correctamente
+  string mensaje = 2;          // Mensaje de estado
+  bytes archivo = 3;           // Contenido binario del recurso
+}

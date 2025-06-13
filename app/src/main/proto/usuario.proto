@@ -22,6 +22,8 @@ message LoginResponse {
   string mensaje = 2;
   string nombreUsuario = 3;
   string token = 4;
+  string rol = 5;
+  int32 usuarioId = 6;
 }
 
 message PerfilRequest {
