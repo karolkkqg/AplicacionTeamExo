@@ -16,6 +16,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".PantallaSubirPost"
+            android:exported="false" />
+        <activity
+            android:name=".PantallaEstadisticas"
+            android:exported="false" />
+        <activity
             android:name=".PantallaPublicacion"
             android:exported="false" />
         <activity

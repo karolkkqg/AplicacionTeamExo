@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.aplicacionteamexo.grpc.LoginRequest;
 import com.example.aplicacionteamexo.grpc.LoginResponse;
 import com.example.aplicacionteamexo.grpc.UsuarioServiceGrpc;
+import com.example.aplicacionteamexo.utils.Validador;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -61,8 +62,16 @@ public class ActividadLogin extends AppCompatActivity {
             String correo = etCorreo.getText().toString().trim();
             String contrasena = etPassword.getText().toString();
 
-            if (correo.isEmpty() || contrasena.isEmpty()) {
-                Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
+            StringBuilder errores = new StringBuilder();
+
+            String errCorreo = Validador.validarCorreo(correo);
+            if (errCorreo != null) errores.append("- ").append(errCorreo).append("\n");
+
+            String errPass = Validador.validarPassword(contrasena);
+            if (errPass != null) errores.append("- ").append(errPass).append("\n");
+
+            if (errores.length() > 0) {
+                Toast.makeText(getApplicationContext(), errores.toString(), Toast.LENGTH_LONG).show();
                 return;
             }
 
