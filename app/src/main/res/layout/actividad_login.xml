@@ -9,68 +9,105 @@
     android:padding="32dp">
 
     <!-- Logo -->
+
     <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/ic_music_logo"
-        android:layout_marginBottom="8dp" />
+        android:layout_width="115dp"
+        android:layout_height="117dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/ic_music_logo" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="ExoApp"
-        android:textSize="24sp"
+        android:textSize="25sp"
         android:textColor="#FFFFFF"
-        android:layout_marginBottom="24dp"/>
+        android:layout_marginBottom="40dp"/>
 
-    <!-- Correo -->
-    <EditText
-        android:id="@+id/etCorreo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:paddingVertical="12dp"
-        android:layout_marginBottom="16dp"
-        android:background="#66FFFFFF"
-        android:backgroundTint="#FFFFFF"
-        android:hint=" Correo"
-        android:inputType="textEmailAddress"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#CCCCCC" />
+    <LinearLayout
+        android:layout_width="345dp"
+        android:layout_height="417dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/fondo_recuadro"
+        android:orientation="vertical"
+        android:padding="20dp">
 
-    <!-- Contraseña -->
-    <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:paddingVertical="12dp"
-        android:layout_marginBottom="24dp"
-        android:background="#66FFFFFF"
-        android:backgroundTint="#FFFFFF"
-        android:hint=" Contraseña"
-        android:inputType="textPassword"
-        android:drawableEnd="@drawable/ic_candado_cerrado"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#CCCCCC" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="¡Bienvenido!"
+            android:textColor="#C2FFFFFF"
+            android:textSize="20sp" />
 
-    <!-- Botón Iniciar Sesión -->
-    <Button
-        android:id="@+id/btnIniciarSesion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Iniciar Sesión"
-        android:backgroundTint="#B20FBD"
-        android:textColor="#FFFFFF"
-        android:layout_marginBottom="4dp" />
+        <EditText
+            android:id="@+id/etCorreo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/borde_redondeado"
+            android:backgroundTint="#FFFFFF"
+            android:hint=" Correo"
+            android:inputType="textEmailAddress"
+            android:minHeight="48dp"
+            android:paddingVertical="12dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="#1B1919"
+            android:textColorHint="#CCCCCC" />
 
-    <!-- Botón Registrarse -->
-    <Button
-        android:id="@+id/btnRegistrarse"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Registrarse"
-        android:textColor="#FFFFFF"
-        android:background="@drawable/boton_borde_blanco"
-        android:layout_marginTop="8dp" />
+        <!-- Contraseña -->
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/borde_redondeado"
+            android:backgroundTint="#FFFFFF"
+            android:drawableEnd="@drawable/ic_candado_cerrado"
+            android:hint=" Contraseña"
+            android:inputType="textPassword"
+            android:minHeight="48dp"
+            android:paddingVertical="12dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="12dp"
+            android:textColor="#000000"
+            android:textColorHint="#CCCCCC" />
+
+        <!-- Botones -->
+        <Button
+            android:id="@+id/btnIniciarSesion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="#6D1573"
+            android:text="Iniciar Sesión"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/btnRegistrarse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/boton_borde_blanco"
+            android:backgroundTint="@null"
+            android:stateListAnimator="@null"
+            android:text="Registrarse"
+            android:textColor="#FFFFFF" />
+
+        <ProgressBar
+            android:id="@+id/barraProgreso"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:indeterminateTint="#FFFFFF" />
+
+
+    </LinearLayout>
+
 </LinearLayout>

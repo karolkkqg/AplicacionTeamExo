@@ -43,9 +43,12 @@ import com.example.aplicacionteamexo.data.repositorio.PublicacionRepository;
 import com.example.aplicacionteamexo.data.repositorio.ReaccionRepository;
 import com.example.aplicacionteamexo.data.repositorio.UsuarioRepository;
 
-import recurso.RecursoServiceGrpc;
 
+import com.example.aplicacionteamexo.grpc.recurso.DescargarRecursoRequest;
+import com.example.aplicacionteamexo.grpc.recurso.DescargarRecursoResponse;
+import com.example.aplicacionteamexo.grpc.recurso.RecursoServiceGrpc;
 import com.google.gson.Gson;
+
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -242,7 +245,7 @@ public class PublicacionAdapter extends RecyclerView.Adapter<PublicacionAdapter.
             new Thread(() -> {
                 try {
                     ManagedChannel channel = ManagedChannelBuilder
-                            .forAddress("192.168.233.88", 50054)
+                            .forAddress("192.168.100.28", 50054)
                             .usePlaintext()
                             .maxInboundMessageSize(50 * 1024 * 1024)
                             .build();
@@ -250,13 +253,13 @@ public class PublicacionAdapter extends RecyclerView.Adapter<PublicacionAdapter.
                     Log.d("DescargaRecurso", "ID que se envía para descargar: " + publicacionConRecurso.getRecurso().getIdentificador());
                     RecursoServiceGrpc.RecursoServiceBlockingStub recursoStub = RecursoServiceGrpc.newBlockingStub(channel);
 
-                    recurso.Recurso.DescargarRecursoRequest request = recurso.Recurso.DescargarRecursoRequest.newBuilder()
+                    DescargarRecursoRequest request = DescargarRecursoRequest.newBuilder()
 
                             .setTipo(publicacionConRecurso.getRecurso().getTipo()) // Cambia dinámicamente si sabes si es Audio/Video
                             .setIdentificador(publicacionConRecurso.getRecurso().getIdentificador()) // Asegúrate de tener este ID
                             .build();
 
-                    recurso.Recurso.DescargarRecursoResponse response = recursoStub.descargarRecurso(request);
+                    DescargarRecursoResponse response = recursoStub.descargarRecurso(request);
 
                     byte[] archivo = response.getArchivo().toByteArray();
 

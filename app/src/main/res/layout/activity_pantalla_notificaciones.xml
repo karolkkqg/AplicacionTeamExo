@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/notificaciones_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F3ECF7">
+
+    <!-- Barra superior -->
+    <LinearLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="74dp"
+        android:background="#4B0055"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingTop="28dp"
+        android:padding="16dp" >
+
+        <ImageButton
+            android:id="@+id/btnRegresar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/flecha_regreso"
+            android:background="@null"
+            android:contentDescription="Regresar"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notificaciones"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginStart="20dp"/>
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnEliminar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Eliminar seleccionada"
+        android:enabled="false"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:layout_below="@id/top_bar" />
+
+    <!-- Lista de notificaciones -->
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerNotificaciones"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+</RelativeLayout>

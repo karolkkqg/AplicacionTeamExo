@@ -42,12 +42,12 @@ protobuf {
         all().forEach { task ->
             task.builtins {
                 java {
-                    option 'lite' // Usa esto solo si estás usando 'protobuf-javalite'
+                    option 'lite'
                 }
             }
             task.plugins {
                 grpc {
-                    option 'lite' // Asegura compatibilidad con Android y javalite
+                    option 'lite'
                 }
             }
         }
@@ -77,7 +77,9 @@ dependencies {
     implementation 'com.google.protobuf:protobuf-javalite:3.25.0'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'commons-io:commons-io:2.11.0'
+    implementation 'com.itextpdf:itextg:5.5.10'
     implementation 'com.github.bumptech.glide:glide:4.15.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'
+    implementation 'androidx.core:core-ktx:1.6.0'
 
 }

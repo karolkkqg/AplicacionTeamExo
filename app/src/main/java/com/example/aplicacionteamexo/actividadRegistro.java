@@ -1,5 +1,7 @@
 package com.example.aplicacionteamexo;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.MotionEvent;
@@ -136,6 +138,22 @@ public class actividadRegistro extends AppCompatActivity {
             String errPass = Validador.validarPassword(password);
             if (errPass != null) errores.append("- ").append(errPass).append("\n");
 
+            if (rol.equals("Moderador")) {
+                if (claveRol.isEmpty()) {
+                    errores.append("- La clave del rol no puede estar vacía.\n");
+                } else if (!claveRol.equals("uwo193d")) {
+                    errores.append("- Clave incorrecta para el rol seleccionado.\n");
+                }
+            }
+
+            if (rol.equals("Admnistrador")) {
+                if (claveRol.isEmpty()) {
+                    errores.append("- La clave del rol no puede estar vacía.\n");
+                } else if (!claveRol.equals("29dmao2")) {
+                    errores.append("- Clave incorrecta para el rol seleccionado.\n");
+                }
+            }
+
             if (errores.length() > 0) {
                 Toast.makeText(getApplicationContext(), errores.toString(), Toast.LENGTH_LONG).show();
                 return;
@@ -183,7 +201,19 @@ public class actividadRegistro extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<UsuarioRespuesta> call, Throwable t) {
-                    Toast.makeText(getApplicationContext(), "Fallo: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    boolean estaConectado = false;
+
+                    ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+                    if (connectivityManager != null) {
+                        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                        estaConectado = networkInfo != null && networkInfo.isConnected();
+                    }
+
+                    if (estaConectado) {
+                        Toast.makeText(actividadRegistro.this, "Ocurrió un problema con el servidor", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(actividadRegistro.this, "Sin conexión a Internet. Verifica tu red.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         });

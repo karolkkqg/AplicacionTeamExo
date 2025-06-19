@@ -2,6 +2,8 @@ package com.example.aplicacionteamexo;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -43,7 +45,16 @@ public class PantallaPerfil extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pantalla_perfil);
 
+        int usuarioId = getSharedPreferences("auth", MODE_PRIVATE).getInt("usuarioId", 0);
+        if (usuarioId != 0) {
+            NotificacionGrpcService notificacionService = new NotificacionGrpcService(this);
+            notificacionService.suscribirseANotificaciones(usuarioId);
+        }
+
         publicacionRepository = new PublicacionRepository();
+
+        Button btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
+        btnCerrarSesion.setOnClickListener(v -> mostrarDialogoCerrarSesion());
 
         inicializarVistas();
         obtenerDatosUsuario();
@@ -133,8 +144,19 @@ public class PantallaPerfil extends AppCompatActivity{
 
                     @Override
                     public void onFailure(Call<List<PublicacionConRecurso>> call, Throwable t) {
-                        Log.e("API_ERROR", "Error de conexión: " + t.getMessage());
-                        Toast.makeText(PantallaPerfil.this, "Error al obtener publicaciones", Toast.LENGTH_LONG).show();
+                        boolean estaConectado = false;
+
+                        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+                        if (connectivityManager != null) {
+                            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                            estaConectado = networkInfo != null && networkInfo.isConnected();
+                        }
+
+                        if (estaConectado) {
+                            Toast.makeText(PantallaPerfil.this, "Ocurrió un problema con el servidor", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(PantallaPerfil.this, "Sin conexión a Internet. Verifica tu red.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
     }
@@ -161,4 +183,21 @@ public class PantallaPerfil extends AppCompatActivity{
         Log.e("API_ERROR", "Código HTTP: " + codigoError);
     }
 
+    private void mostrarDialogoCerrarSesion() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Cerrar sesión")
+                .setMessage("¿Estás segura de que quieres cerrar sesión? Puedes volver, pero yo no me olvido fácil.")
+                .setPositiveButton("Sí, cerrar", (dialog, which) -> cerrarSesion())
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+
+    private void cerrarSesion() {
+        getSharedPreferences("auth", MODE_PRIVATE).edit().clear().apply();
+        Intent intent = new Intent(this, ActividadLogin.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
 }

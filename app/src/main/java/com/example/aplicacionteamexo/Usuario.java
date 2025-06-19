@@ -10,11 +10,9 @@ public class Usuario {
     private String contrasena;
     private String rol;
 
-    // Constructor vacío requerido para deserialización (por ejemplo, con Gson)
     public Usuario() {
     }
 
-    // Constructor con todos los campos
     public Usuario(int usuarioId, String nombreUsuario, String nombre, String apellidos,
                    String correo, String contrasena, String rol) {
         this.usuarioId = usuarioId;
@@ -26,7 +24,6 @@ public class Usuario {
         this.rol = rol;
     }
 
-    // Getters y setters
     public int getUsuarioId() {
         return usuarioId;
     }

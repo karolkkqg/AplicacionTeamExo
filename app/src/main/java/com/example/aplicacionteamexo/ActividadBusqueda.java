@@ -1,6 +1,8 @@
 package com.example.aplicacionteamexo;
 
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -51,7 +53,7 @@ public class ActividadBusqueda extends AppCompatActivity {
                     (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {
 
                 queryBusqueda = editTextSearch.getText().toString().trim();
-                buscarPublicaciones(); // 👈 activa la búsqueda
+                buscarPublicaciones();
                 return true;
             }
             return false;
@@ -68,7 +70,6 @@ public class ActividadBusqueda extends AppCompatActivity {
         esModerador = getIntent().getBooleanExtra("esModerador", false);
         queryBusqueda = getIntent().getStringExtra("query");
 
-        // Refuerzo por string si llega como texto
         String rolUsuario = getIntent().getStringExtra("rol");
         if (rolUsuario != null && rolUsuario.equalsIgnoreCase("Moderador")) {
             esModerador = true;
@@ -92,8 +93,8 @@ public class ActividadBusqueda extends AppCompatActivity {
 
     private void buscarPublicaciones() {
         if (queryBusqueda != null && !queryBusqueda.isEmpty()) {
-            String categorias = ""; // Podrías permitir filtrarlas más adelante
-            String tipoRecurso = ""; // Igual aquí
+            String categorias = "";
+            String tipoRecurso = "";
 
             publicacionRepository.buscarPublicaciones(
                     queryBusqueda,
@@ -120,7 +121,19 @@ public class ActividadBusqueda extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<PublicacionBusquedaRespuesta> call, Throwable t) {
-                    Toast.makeText(ActividadBusqueda.this, "Error de conexión", Toast.LENGTH_SHORT).show();
+                    boolean estaConectado = false;
+
+                    ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+                    if (connectivityManager != null) {
+                        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                        estaConectado = networkInfo != null && networkInfo.isConnected();
+                    }
+
+                    if (estaConectado) {
+                        Toast.makeText(ActividadBusqueda.this, "Ocurrió un problema con el servidor", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(ActividadBusqueda.this, "Sin conexión a Internet. Verifica tu red.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         }

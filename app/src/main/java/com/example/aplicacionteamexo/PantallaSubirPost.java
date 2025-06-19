@@ -2,6 +2,8 @@ package com.example.aplicacionteamexo;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
@@ -20,6 +22,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.aplicacionteamexo.grpc.recurso.RecursoServiceGrpc;
+import com.example.aplicacionteamexo.grpc.recurso.CrearRecursoRequest;
+import com.example.aplicacionteamexo.grpc.recurso.CrearRecursoResponse;
+import com.example.aplicacionteamexo.utilidades.Configuracion;
 import com.example.aplicacionteamexo.utils.Validador;
 import com.google.protobuf.ByteString;
 
@@ -33,8 +39,8 @@ import java.io.InputStream;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
-import recurso.Recurso;
-import recurso.RecursoServiceGrpc;
+//import recurso.Recurso;
+//import recurso.RecursoServiceGrpc;
 
 public class PantallaSubirPost extends AppCompatActivity {
 
@@ -114,7 +120,6 @@ public class PantallaSubirPost extends AppCompatActivity {
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
                 archivoSeleccionadoTextView.setText("Error al leer archivo");
             }
         }
@@ -183,9 +188,9 @@ public class PantallaSubirPost extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        String ip = Configuracion.obtenerIP(getApplicationContext());
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://192.168.233.88/api/publicaciones";
+        String url = "http://"+ip+"/api/publicaciones";
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, json,
                 response -> {
@@ -212,14 +217,15 @@ public class PantallaSubirPost extends AppCompatActivity {
 
 
     private void crearRecursoGrpc(int publicacionId, int usuarioId) {
+        String ip = Configuracion.obtenerIP(getApplicationContext());
         ManagedChannel channel = ManagedChannelBuilder
-                .forAddress("192.168.233.88", 50054)
+                .forAddress(ip, 50054)
                 .usePlaintext()
                 .build();
 
         RecursoServiceGrpc.RecursoServiceStub stub = RecursoServiceGrpc.newStub(channel);
 
-        Recurso.CrearRecursoRequest.Builder builder = Recurso.CrearRecursoRequest.newBuilder()
+        CrearRecursoRequest.Builder builder = CrearRecursoRequest.newBuilder()
                 .setTipo(tipoRecurso)
                 .setIdentificador((int) (System.currentTimeMillis() % 100000))
                 .setFormato(formato)
@@ -234,9 +240,9 @@ public class PantallaSubirPost extends AppCompatActivity {
             builder.setDuracion(resolucionODuracion);
         }
 
-        stub.crearRecurso(builder.build(), new StreamObserver<Recurso.CrearRecursoResponse>() {
+        stub.crearRecurso(builder.build(), new StreamObserver<CrearRecursoResponse>() {
             @Override
-            public void onNext(Recurso.CrearRecursoResponse value) {
+            public void onNext(CrearRecursoResponse value) {
                 runOnUiThread(() -> {
                     if (value.getExito()) {
                         Toast.makeText(PantallaSubirPost.this, "" + value.getMensaje(), Toast.LENGTH_LONG).show();
@@ -248,6 +254,19 @@ public class PantallaSubirPost extends AppCompatActivity {
 
             @Override
             public void onError(Throwable t) {
+                boolean estaConectado = false;
+
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+                if (connectivityManager != null) {
+                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                    estaConectado = networkInfo != null && networkInfo.isConnected();
+                }
+
+                if (estaConectado) {
+                    Toast.makeText(PantallaSubirPost.this, "Ocurrió un problema con el servidor", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PantallaSubirPost.this, "Sin conexión a Internet. Verifica tu red.", Toast.LENGTH_SHORT).show();
+                }
                 Log.e("gRPC", "Error al crear recurso: " + t.getMessage());
             }
 

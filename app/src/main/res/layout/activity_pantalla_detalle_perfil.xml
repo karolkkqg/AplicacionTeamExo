@@ -1,118 +1,165 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
-
-    <LinearLayout
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp"
-        android:background="#FFFFFF">
+        android:layout_height="match_parent">
 
-        <!-- Título -->
-        <LinearLayout
+        <!-- Fondo con forma de ola -->
+
+        <ImageView
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="#53005D"
-            android:gravity="center_vertical">
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/fondo_exo" />
 
-            <ImageButton
-                android:id="@+id/btnRegresar"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/flecha_regreso"
-                android:background="@null"
-                android:contentDescription="Regresar" />
+        <!-- Vector de ola encima -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/bg_ola"
+            android:scaleType="fitXY"
+            android:alpha="0.4"/>
 
-            <TextView
-                android:layout_width="wrap_content"
+        <!-- Contenido scrollable -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:padding="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Perfil"
-                android:textSize="20sp"
-                android:textColor="#FFFFFF"
-                android:layout_marginStart="16dp" />
-        </LinearLayout>
+                android:orientation="vertical"
+                android:layout_margin="2dp"
+                android:layout_marginHorizontal="32dp"
+                android:background="#FFFFFF">
 
-        <!-- Campos de texto -->
-        <TextView android:text="Nombre de usuario:"
-            style="@style/LabelStyle"
-            android:layout_marginTop="16dp" />
-        <EditText
-            android:id="@+id/etNombreUsuario"
-            style="@style/EditTextStyle"
-            android:hint="Nombre de usuario"
-            android:inputType="textPersonName" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="#53005D"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp">
 
-        <TextView android:text="Nombre:"
-            style="@style/LabelStyle"
-            android:layout_marginTop="16dp" />
-        <EditText
-            android:id="@+id/etNombre"
-            style="@style/EditTextStyle"
-            android:hint="Nombre" />
+                    <ImageButton
+                        android:id="@+id/btnRegresar"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/flecha_regreso"
+                        android:background="@null"
+                        android:contentDescription="Regresar" />
 
-        <TextView android:text="Apellidos:" style="@style/LabelStyle" />
-        <EditText
-            android:id="@+id/etApellidos"
-            style="@style/EditTextStyle"
-            android:hint="Apellidos" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Perfil"
+                        android:textSize="20sp"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginStart="16dp" />
 
-        <TextView android:text="Correo:" style="@style/LabelStyle" />
-        <EditText
-            android:id="@+id/etCorreo"
-            style="@style/EditTextStyle"
-            android:hint="Correo"
-            android:inputType="textEmailAddress" />
+                    <!-- Vista vacía que empuja el botón a la derecha -->
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
 
-        <!-- Rol (recuadro morado no editable) -->
-        <TextView
-            android:id="@+id/tvRol"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Moderador"
-            android:padding="12dp"
-            android:layout_marginTop="8dp"
-            android:textColor="#FFFFFF"
-            android:background="@drawable/bg_rol_morado"
-            android:gravity="center_vertical"
-            android:drawablePadding="8dp" />
+                    <!-- Botón de borrar cuenta a la derecha -->
+                    <Button
+                        android:id="@+id/btnBorrarCuenta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:text="Borrar cuenta"
+                        android:textSize="14sp"
+                        android:textColor="#FFFFFF"
+                        android:backgroundTint="#7D52A1"
+                        android:layout_marginEnd="2dp"
+                        android:layout_gravity="center_vertical"
+                        android:paddingHorizontal="6dp"
+                        android:background="@drawable/boton_borde_morado" />
+                </LinearLayout>
 
-        <!-- Botones -->
-        <Button
-            android:id="@+id/btnEditarPerfil"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Editar perfil"
-            android:background="@drawable/boton_borde_morado"
-            android:textColor="#4B0082"
-            android:layout_marginTop="24dp" />
+                <!-- Campos de texto -->
+                <TextView android:text="Nombre de usuario:"
+                    style="@style/LabelStyle"
+                    android:layout_marginTop="16dp" />
+                <EditText
+                    android:id="@+id/etNombreUsuario"
+                    style="@style/EditTextStyle"
+                    android:hint="Nombre de usuario"
+                    android:inputType="textPersonName" />
 
-        <Button
-            android:id="@+id/btnMostrarEditarContrasena"
-            android:text="Editar contraseña"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFF"
-            android:layout_marginTop="24dp"
-            android:backgroundTint="#53005D" />
+                <TextView android:text="Nombre:"
+                    style="@style/LabelStyle"
+                    android:layout_marginTop="16dp" />
+                <EditText
+                    android:id="@+id/etNombre"
+                    style="@style/EditTextStyle"
+                    android:hint="Nombre" />
 
-        <EditText
-            android:id="@+id/etContrasena"
-            style="@style/EditTextStyle"
-            android:hint="Contraseña"
-            android:inputType="textPassword"
-            android:drawableEnd="@drawable/ic_candado_cerrado"
-            android:paddingEnd="12dp"
-            android:layout_marginTop="24dp"/>
+                <TextView android:text="Apellidos:" style="@style/LabelStyle" />
+                <EditText
+                    android:id="@+id/etApellidos"
+                    style="@style/EditTextStyle"
+                    android:hint="Apellidos" />
 
-        <Button
-            android:id="@+id/btnGuardarContrasena"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Aceptar"
-            android:background="@drawable/boton_borde_morado"
-            android:textColor="#4B0082"
-            android:layout_marginTop="24dp" />
-    </LinearLayout>
-</ScrollView>
+                <TextView android:text="Correo:" style="@style/LabelStyle" />
+                <EditText
+                    android:id="@+id/etCorreo"
+                    style="@style/EditTextStyle"
+                    android:hint="Correo"
+                    android:inputType="textEmailAddress" />
+
+                <!-- Rol (recuadro morado no editable) -->
+                <TextView
+                    android:id="@+id/tvRol"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Moderador"
+                    android:padding="12dp"
+                    android:layout_marginTop="8dp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/bg_rol_morado"
+                    android:gravity="center_vertical"
+                    android:drawablePadding="8dp" />
+
+                <!-- Botones -->
+                <Button
+                    android:id="@+id/btnEditarPerfil"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Editar perfil"
+                    android:background="@drawable/boton_borde_morado"
+                    android:textColor="#4B0082"
+                    android:layout_marginTop="24dp" />
+
+                <Button
+                    android:id="@+id/btnMostrarEditarContrasena"
+                    android:text="Editar contraseña"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFF"
+                    android:layout_marginTop="24dp"
+                    android:backgroundTint="#53005D" />
+
+                <EditText
+                    android:id="@+id/etContrasena"
+                    style="@style/EditTextStyle"
+                    android:hint="Contraseña"
+                    android:inputType="textPassword"
+                    android:drawableEnd="@drawable/ic_candado_cerrado"
+                    android:paddingEnd="12dp"
+                    android:layout_marginTop="24dp"/>
+
+                <Button
+                    android:id="@+id/btnGuardarContrasena"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Aceptar"
+                    android:background="@drawable/boton_borde_morado"
+                    android:textColor="#4B0082"
+                    android:layout_marginTop="24dp" />
+            </LinearLayout>
+        </ScrollView>
+    </FrameLayout>
+

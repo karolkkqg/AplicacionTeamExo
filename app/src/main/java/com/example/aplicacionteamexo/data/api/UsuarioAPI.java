@@ -13,6 +13,7 @@ import retrofit2.http.GET;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Header;
+import retrofit2.http.DELETE;
 
 public interface UsuarioAPI {
     @POST("/api/usuarios")
@@ -30,6 +31,12 @@ public interface UsuarioAPI {
             @Header("Authorization") String token,
             @Path("usuarioId") int usuarioId,
             @Body ContrasenaRequest body
+    );
+
+    @DELETE("api/usuarios/{usuarioId}")
+    Call<UsuarioRespuesta> eliminarUsuario(
+            @Header("Authorization") String token,
+            @Path("usuarioId") int usuarioId
     );
 
     @GET("api/usuarios/{usuarioId}")
