@@ -4,6 +4,7 @@ import com.example.aplicacionteamexo.data.modelo.ContrasenaRequest;
 import com.example.aplicacionteamexo.data.modelo.Usuario;
 import com.example.aplicacionteamexo.data.modelo.UsuarioRegistro;
 import com.example.aplicacionteamexo.data.modelo.UsuarioRespuesta;
+import com.example.aplicacionteamexo.data.modelo.UsuarioRespuestaBusqueda;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -30,4 +31,8 @@ public interface UsuarioAPI {
             @Path("usuarioId") int usuarioId,
             @Body ContrasenaRequest body
     );
+
+    @GET("api/usuarios/{usuarioId}")
+    Call<UsuarioRespuestaBusqueda> obtenerUsuarioPorId(@Path("usuarioId") int usuarioId);
+
 }

@@ -11,6 +11,8 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import okhttp3.Request;  // ✅ ESTA ES LA CORRECTA
+
 import com.example.aplicacionteamexo.grpc.LoginRequest;
 import com.example.aplicacionteamexo.grpc.LoginResponse;
 import com.example.aplicacionteamexo.grpc.UsuarioServiceGrpc;
@@ -18,12 +20,15 @@ import com.example.aplicacionteamexo.utils.Validador;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
 
 public class ActividadLogin extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        probarConexionServidor();
         EdgeToEdge.enable(this);
         setContentView(R.layout.actividad_login);
 
@@ -78,7 +83,7 @@ public class ActividadLogin extends AppCompatActivity {
             new Thread(() -> {
                 try {
                     ManagedChannel channel = ManagedChannelBuilder
-                            .forAddress("192.168.0.108", 50051) // IP y puerto del servidor gRPC
+                            .forAddress("192.168.100.28", 50051) // IP y puerto del servidor gRPC
                             .usePlaintext()
                             .build();
 
@@ -125,6 +130,10 @@ public class ActividadLogin extends AppCompatActivity {
                                     .putInt("usuarioId", usuarioId) // 👈 Guardar usuarioId
                                     .apply();
 
+                            Intent intent = new Intent(ActividadLogin.this, PantallaPrincipal.class);
+                            startActivity(intent);
+                            finish();
+
                         } else {
                             Toast.makeText(this, "Error: " + response.getMensaje(), Toast.LENGTH_SHORT).show();
                         }
@@ -139,5 +148,28 @@ public class ActividadLogin extends AppCompatActivity {
                 }
             }).start();
         });
+    }
+
+    public void probarConexionServidor() {
+        new Thread(() -> {
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url("http://192.168.100.28:3000/api/usuarios")
+                    .build();
+
+            try {
+                Response response = client.newCall(request).execute();
+                if (response.isSuccessful()) {
+                    String body = response.body().string();
+                    runOnUiThread(() -> Toast.makeText(this, "Servidor OK. Datos: " + body.length(), Toast.LENGTH_LONG).show());
+                } else {
+                    runOnUiThread(() -> Toast.makeText(this, "Código HTTP: " + response.code(), Toast.LENGTH_LONG).show());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
+            }
+        }).start();
     }
 }

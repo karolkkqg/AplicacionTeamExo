@@ -1,52 +1,25 @@
 package com.example.aplicacionteamexo.data.modelo.comentario;
 
 public class ComentarioRegistro {
-    private int comentarioId;
     private int publicacionId;
     private int usuarioId;
     private String texto;
 
-    public ComentarioRegistro(int comentarioId, int publicacionId, int usuarioId, String texto) {
-        this.comentarioId = comentarioId;
+    // Constructor
+    public ComentarioRegistro(int publicacionId, int usuarioId, String texto) {
         this.publicacionId = publicacionId;
         this.usuarioId = usuarioId;
         this.texto = texto;
     }
 
-    // --- Getters ---
+    // Getters y Setters
+    public int getPublicacionId() { return publicacionId; }
+    public void setPublicacionId(int publicacionId) { this.publicacionId = publicacionId; }
 
-    public int getComentarioId() {
-        return comentarioId;
-    }
+    public int getUsuarioId() { return usuarioId; }
+    public void setUsuarioId(int usuarioId) { this.usuarioId = usuarioId; }
 
-    public int getPublicacionId() {
-        return publicacionId;
-    }
-
-    public int getUsuarioId() {
-        return usuarioId;
-    }
-
-    public String getTexto() {
-        return texto;
-    }
-
-    // --- Setters ---
-
-    public void setComentarioId(int comentarioId) {
-        this.comentarioId = comentarioId;
-    }
-
-    public void setPublicacionId(int publicacionId) {
-        this.publicacionId = publicacionId;
-    }
-
-    public void setUsuarioId(int usuarioId) {
-        this.usuarioId = usuarioId;
-    }
-
-    public void setTexto(String texto) {
-        this.texto = texto;
-    }
-
+    public String getTexto() { return texto; }
+    public void setTexto(String texto) { this.texto = texto; }
 }
+

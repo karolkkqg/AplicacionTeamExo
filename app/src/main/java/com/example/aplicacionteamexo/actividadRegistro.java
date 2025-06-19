@@ -136,22 +136,6 @@ public class actividadRegistro extends AppCompatActivity {
             String errPass = Validador.validarPassword(password);
             if (errPass != null) errores.append("- ").append(errPass).append("\n");
 
-            if (!rol.equals("Moderador")) {
-                if (claveRol.isEmpty()) {
-                    errores.append("- La clave del rol no puede estar vacía.\n");
-                } else if (!claveRol.equals("uwo193d")) {
-                    errores.append("- Clave incorrecta para el rol seleccionado.\n");
-                }
-            }
-
-            if (!rol.equals("Admnistrador")) {
-                if (claveRol.isEmpty()) {
-                    errores.append("- La clave del rol no puede estar vacía.\n");
-                } else if (!claveRol.equals("29dmao2")) {
-                    errores.append("- Clave incorrecta para el rol seleccionado.\n");
-                }
-            }
-
             if (errores.length() > 0) {
                 Toast.makeText(getApplicationContext(), errores.toString(), Toast.LENGTH_LONG).show();
                 return;

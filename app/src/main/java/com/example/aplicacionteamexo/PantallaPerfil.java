@@ -10,39 +10,33 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.aplicacionteamexo.data.modelo.comentario.Comentario;
-import com.example.aplicacionteamexo.data.modelo.comentario.ComentarioRegistro;
-import com.example.aplicacionteamexo.data.modelo.publicacion.Publicacion;
-import com.example.aplicacionteamexo.data.repositorio.ComentarioRepository;
+import com.example.aplicacionteamexo.data.modelo.publicacion.PublicacionConRecurso;
 import com.example.aplicacionteamexo.data.repositorio.PublicacionRepository;
-import com.example.aplicacionteamexo.utilidades.OnPublicacionInteractionListener;
 import com.example.aplicacionteamexo.utilidades.PublicacionAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PantallaPerfil extends AppCompatActivity implements OnPublicacionInteractionListener {
+public class PantallaPerfil extends AppCompatActivity{
 
     private TextView tvNombreUsuario;
     private Button btnEditarPerfil, btnSubirPublicacion;
     private RecyclerView recyclerPublicaciones;
     private PublicacionAdapter publicacionAdapter;
-    private List<Publicacion> listaPosts;
+    private List<PublicacionConRecurso> listaPosts = new ArrayList<>();
     private boolean esModerador;
     private int usuarioId;
-    private PublicacionRepository publicacionRepository;
-    private List<Publicacion> listaPublicaciones;
-
     private SharedPreferences sharedPreferences;
+
+    private PublicacionRepository publicacionRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,20 +44,11 @@ public class PantallaPerfil extends AppCompatActivity implements OnPublicacionIn
         setContentView(R.layout.activity_pantalla_perfil);
 
         publicacionRepository = new PublicacionRepository();
-        obtenerDatosUsuario();
+
         inicializarVistas();
+        obtenerDatosUsuario();
         configurarBotones();
         cargarPublicacionesUsuario();
-    }
-
-    private void obtenerDatosUsuario() {
-        SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
-        String nombreUsuario = prefs.getString("nombreUsuario", "Usuario");
-        String rolUsuario = prefs.getString("rol", "fan");
-
-        usuarioId = prefs.getInt("usuarioId", -1);
-        esModerador = rolUsuario.equalsIgnoreCase("moderador");
-        tvNombreUsuario.setText(nombreUsuario);
     }
 
     private void inicializarVistas() {
@@ -71,132 +56,109 @@ public class PantallaPerfil extends AppCompatActivity implements OnPublicacionIn
         btnEditarPerfil = findViewById(R.id.btnEditarPerfil);
         btnSubirPublicacion = findViewById(R.id.btnSubirPublicacion);
         recyclerPublicaciones = findViewById(R.id.recyclerPublicaciones);
+        sharedPreferences = getSharedPreferences("auth", MODE_PRIVATE);
 
+        recyclerPublicaciones.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void obtenerDatosUsuario() {
+        usuarioId = sharedPreferences.getInt("usuarioId", -1);
+
+        Log.d("USER_DEBUG", "ID de usuario obtenido de SharedPreferences: " + usuarioId);
+
+        if (usuarioId == -1) {
+            Toast.makeText(this, "Error: ID de usuario no válido", Toast.LENGTH_LONG).show();
+            Log.e("USER_ERROR", "ID de usuario no válido (-1)");
+            finish();
+            return;
+        }
+
+        String nombreUsuario = sharedPreferences.getString("nombreUsuario", "Usuario");
+        String rolUsuario = sharedPreferences.getString("rol", "fan");
+        esModerador = rolUsuario.equalsIgnoreCase("moderador");
+
+        tvNombreUsuario.setText(nombreUsuario);
         Button btnVerEstadisticas = findViewById(R.id.btnVerEstadisticas);
         btnVerEstadisticas.setVisibility(esModerador ? View.VISIBLE : View.GONE);
+        publicacionAdapter = new PublicacionAdapter(listaPosts, esModerador, this);
+        recyclerPublicaciones.setAdapter(publicacionAdapter);
+
+        Log.d("USER_DEBUG", "ID de usuario obtenido: " + usuarioId);
     }
 
     private void configurarBotones() {
         ImageButton btnAtras = findViewById(R.id.btnVolver);
         btnAtras.setOnClickListener(v -> finish());
 
-        btnEditarPerfil.setOnClickListener(v ->
-                Toast.makeText(this, "Editar perfil aún no implementado", Toast.LENGTH_SHORT).show());
-
-        btnSubirPublicacion.setOnClickListener(v -> {
-            Intent intent = new Intent(this, PantallaPublicacion.class);
+        btnEditarPerfil.setOnClickListener(v ->{
+            Intent intent = new Intent(this, PantallaDetallePerfil.class);
             intent.putExtra("usuarioId", usuarioId);
             startActivity(intent);
         });
 
-        findViewById(R.id.btnVerEstadisticas).setOnClickListener(v ->
-                Toast.makeText(this, "Ver estadísticas (pendiente)", Toast.LENGTH_SHORT).show());
+
+        btnSubirPublicacion.setOnClickListener(v -> {
+            Intent intent = new Intent(this, PantallaSubirPost.class);
+            intent.putExtra("usuarioId", usuarioId);
+            startActivity(intent);
+        });
+
+        findViewById(R.id.btnVerEstadisticas).setOnClickListener(v ->{
+            Intent intent = new Intent(this, PantallaEstadisticas.class);
+            intent.putExtra("usuarioId", usuarioId);
+            startActivity(intent);
+        });
+
     }
 
     private void cargarPublicacionesUsuario() {
-        publicacionRepository.obtenerPorUsuario(usuarioId).enqueue(new Callback<List<Publicacion>>() {
-            @Override
-            public void onResponse(Call<List<Publicacion>> call, Response<List<Publicacion>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    listaPosts = response.body();
-                    publicacionAdapter = new PublicacionAdapter(listaPosts, esModerador, PantallaPerfil.this, PantallaPerfil.this);
-                    recyclerPublicaciones.setLayoutManager(new LinearLayoutManager(PantallaPerfil.this));
-                    recyclerPublicaciones.setAdapter(publicacionAdapter);
-                } else {
-                    Toast.makeText(PantallaPerfil.this, "Error al obtener publicaciones", Toast.LENGTH_SHORT).show();
-                }
-            }
+        Log.d("API_DEBUG", "Cargando publicaciones del usuario con ID: " + usuarioId);
 
-            @Override
-            public void onFailure(Call<List<Publicacion>> call, Throwable t) {
-                Toast.makeText(PantallaPerfil.this, "Fallo de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    // Implementación de OnPublicacionInteractionListener
-    @Override
-    public void onEliminarClick(Publicacion publicacion) {
-        new AlertDialog.Builder(this)
-                .setTitle("Eliminar publicación")
-                .setMessage("¿Estás seguro de eliminar esta publicación?")
-                .setPositiveButton("Eliminar", (dialog, which) -> eliminarPublicacion(publicacion))
-                .setNegativeButton("Cancelar", null)
-                .show();
-    }
-
-    @Override
-    public void onLikeClick(Publicacion publicacion) {
-        Toast.makeText(this, "Like a: " + publicacion.getTitulo(), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onReaccionClick(Publicacion publicacion, String tipoReaccion) {
-        Toast.makeText(this, "Reacción " + tipoReaccion, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onComentarioSubmit(Publicacion publicacion, String comentario) {
-        int usuarioId = sharedPreferences.getInt("usuarioId", -1);
-        int comentarioId = new Random().nextInt(1000000);
-
-        ComentarioRegistro solicitud = new ComentarioRegistro(
-                comentarioId,
-                publicacion.getIdentificador(),
-                usuarioId,
-                comentario
-        );
-
-        ComentarioRepository comentarioRepo = new ComentarioRepository();
-        comentarioRepo.crearComentario(solicitud, new Callback<Comentario>() {
-            @Override
-            public void onResponse(Call<Comentario> call, Response<Comentario> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(PantallaPerfil.this, "Comentario publicado", Toast.LENGTH_SHORT).show();
-
-                    // Agregar comentario localmente en el modelo
-                    publicacion.agregarComentarioTexto(response.body().getTexto());
-
-                    // Notificar al adaptador para que se actualice el ítem
-                    publicacionAdapter.notifyItemChanged(listaPublicaciones.indexOf(publicacion));
-                } else {
-                    Toast.makeText(PantallaPerfil.this, "Error al publicar", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Comentario> call, Throwable t) {
-                Log.e("Comentario", "Error al comentar", t);
-                Toast.makeText(PantallaPerfil.this, "Error al comentar", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    @Override
-    public void onPublicacionClick(Publicacion publicacion) {
-        Intent intent = new Intent(this, PantallaPublicacion.class);
-        intent.putExtra("publicacion_id", publicacion.getIdentificador());
-        startActivity(intent);
-    }
-
-    private void eliminarPublicacion(Publicacion publicacion) {
-        publicacionRepository.eliminarPublicacion(publicacion.getIdentificador())
-                .enqueue(new Callback<Void>() {
+        publicacionRepository.obtenerPublicacionesPorUsuario(usuarioId)
+                .enqueue(new Callback<List<PublicacionConRecurso>>() {
                     @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        if (response.isSuccessful()) {
-                            listaPosts.remove(publicacion);
+                    public void onResponse(Call<List<PublicacionConRecurso>> call, Response<List<PublicacionConRecurso>> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            listaPosts.clear();
+                            listaPosts.addAll(response.body());
                             publicacionAdapter.notifyDataSetChanged();
-                            Toast.makeText(PantallaPerfil.this, "Publicación eliminada", Toast.LENGTH_SHORT).show();
+
+                            if (listaPosts.isEmpty()) {
+                                Toast.makeText(PantallaPerfil.this, "No hay publicaciones para mostrar", Toast.LENGTH_SHORT).show();
+                            }
                         } else {
-                            Toast.makeText(PantallaPerfil.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
+                            manejarErrorRespuesta(response.code());
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        Toast.makeText(PantallaPerfil.this, "Error de red", Toast.LENGTH_SHORT).show();
+                    public void onFailure(Call<List<PublicacionConRecurso>> call, Throwable t) {
+                        Log.e("API_ERROR", "Error de conexión: " + t.getMessage());
+                        Toast.makeText(PantallaPerfil.this, "Error al obtener publicaciones", Toast.LENGTH_LONG).show();
                     }
                 });
     }
+
+
+    private void manejarErrorRespuesta(int codigoError) {
+        String mensajeError;
+
+        switch (codigoError) {
+            case 401:
+                mensajeError = "No autorizado - Sesión expirada";
+                break;
+            case 404:
+                mensajeError = "Usuario no encontrado";
+                break;
+            case 500:
+                mensajeError = "Error interno del servidor";
+                break;
+            default:
+                mensajeError = "Error al obtener publicaciones. Código: " + codigoError;
+        }
+
+        Toast.makeText(this, mensajeError, Toast.LENGTH_LONG).show();
+        Log.e("API_ERROR", "Código HTTP: " + codigoError);
+    }
+
 }

@@ -1,38 +1,41 @@
 package com.example.aplicacionteamexo.data.repositorio;
 
+
 import com.example.aplicacionteamexo.data.api.ReaccionAPI;
+import com.example.aplicacionteamexo.data.modelo.reaccion.Reaccion;
 import com.example.aplicacionteamexo.data.modelo.reaccion.ReaccionRegistro;
 import com.example.aplicacionteamexo.data.modelo.reaccion.ReaccionRespuesta;
 import com.example.aplicacionteamexo.data.network.RetrofitClient;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import retrofit2.Callback;
+import retrofit2.Call;
 
 public class ReaccionRepository {
-    private ReaccionAPI reaccionApi;
+
+    private final ReaccionAPI api;
 
     public ReaccionRepository() {
-        reaccionApi = RetrofitClient.getInstance().create(ReaccionAPI.class);
+        api = RetrofitClient.getInstance().create(ReaccionAPI.class);
     }
 
-    public void crearReaccion(ReaccionRegistro req, Callback<ReaccionRespuesta> callback) {
-        reaccionApi.crearReaccion(req).enqueue(callback);
+    public Call<ReaccionRespuesta> crearReaccion(ReaccionRegistro registro) {
+        return api.crearReaccion(registro);
     }
 
-    public void actualizarReaccion(int reaccionId, String nuevoTipo, Callback<ReaccionRespuesta> callback) {
-        Map<String, String> body = new HashMap<>();
-        body.put("tipo", nuevoTipo);
-        reaccionApi.actualizarReaccion(reaccionId, body).enqueue(callback);
+    public Call<ReaccionRespuesta> actualizarReaccion(int reaccionId, Map<String, String> body) {
+        return api.actualizarReaccion(reaccionId, body);
     }
 
-    public void eliminarReaccion(int reaccionId, Callback<Void> callback) {
-        reaccionApi.eliminarReaccion(reaccionId).enqueue(callback);
+    public Call<ReaccionRespuesta> eliminarReaccion(int reaccionId) {
+        return api.eliminarReaccion(reaccionId);
     }
 
-    public void obtenerReaccionesPorPublicacion(int publicacionId, Callback<List<ReaccionRespuesta>> callback) {
-        reaccionApi.obtenerReaccionesPorPublicacion(publicacionId).enqueue(callback);
+    public Call<List<Reaccion>> obtenerReaccionesPorPublicacion(int publicacionId) {
+        return api.obtenerReaccionesPorPublicacion(publicacionId);
+    }
+
+    public Call<ReaccionRespuesta> obtenerReaccionPorId(int reaccionId) {
+        return api.obtenerReaccionId(reaccionId);
     }
 }

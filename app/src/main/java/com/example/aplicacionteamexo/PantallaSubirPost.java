@@ -8,6 +8,7 @@ import android.provider.OpenableColumns;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,14 @@ public class PantallaSubirPost extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pantalla_subir_post);
+
+        ImageButton btnRegresar = findViewById(R.id.btnRegresar);
+        btnRegresar.setOnClickListener(v -> {
+            Intent intent = new Intent(PantallaSubirPost.this, PantallaPerfil.class);
+            startActivity(intent);
+            finish();
+        });
+
 
         archivoSeleccionadoTextView = findViewById(R.id.archivoSeleccionadoTextView);
         tituloEditText = findViewById(R.id.tituloEditText);
@@ -176,7 +185,7 @@ public class PantallaSubirPost extends AppCompatActivity {
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://192.168.0.157:3000/api/publicaciones";
+        String url = "http://192.168.100.28/api/publicaciones";
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, json,
                 response -> {
@@ -204,7 +213,7 @@ public class PantallaSubirPost extends AppCompatActivity {
 
     private void crearRecursoGrpc(int publicacionId, int usuarioId) {
         ManagedChannel channel = ManagedChannelBuilder
-                .forAddress("192.168.0.157", 50054)
+                .forAddress("192.168.100.28", 50054)
                 .usePlaintext()
                 .build();
 
