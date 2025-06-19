@@ -185,7 +185,7 @@ public class PantallaSubirPost extends AppCompatActivity {
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://192.168.100.28/api/publicaciones";
+        String url = "http://192.168.233.88/api/publicaciones";
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, json,
                 response -> {
@@ -213,7 +213,7 @@ public class PantallaSubirPost extends AppCompatActivity {
 
     private void crearRecursoGrpc(int publicacionId, int usuarioId) {
         ManagedChannel channel = ManagedChannelBuilder
-                .forAddress("192.168.100.28", 50054)
+                .forAddress("192.168.233.88", 50054)
                 .usePlaintext()
                 .build();
 

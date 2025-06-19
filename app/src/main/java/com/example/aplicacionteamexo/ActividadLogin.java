@@ -83,7 +83,7 @@ public class ActividadLogin extends AppCompatActivity {
             new Thread(() -> {
                 try {
                     ManagedChannel channel = ManagedChannelBuilder
-                            .forAddress("192.168.100.28", 50051) // IP y puerto del servidor gRPC
+                            .forAddress("192.168.233.88", 50051) // IP y puerto del servidor gRPC
                             .usePlaintext()
                             .build();
 
@@ -155,7 +155,7 @@ public class ActividadLogin extends AppCompatActivity {
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder()
-                    .url("http://192.168.100.28:3000/api/usuarios")
+                    .url("http://192.168.233.88:3000/api/usuarios")
                     .build();
 
             try {

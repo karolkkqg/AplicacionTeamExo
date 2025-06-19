@@ -28,6 +28,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.aplicacionteamexo.R;
+import com.example.aplicacionteamexo.data.modelo.Usuario;
+import com.example.aplicacionteamexo.data.modelo.UsuarioRespuestaBusqueda;
 import com.example.aplicacionteamexo.data.modelo.comentario.Comentario;
 import com.example.aplicacionteamexo.data.modelo.comentario.ComentarioRegistro;
 import com.example.aplicacionteamexo.data.modelo.publicacion.Publicacion;
@@ -39,13 +41,16 @@ import com.example.aplicacionteamexo.data.modelo.recurso.Recurso;
 import com.example.aplicacionteamexo.data.repositorio.ComentarioRepository;
 import com.example.aplicacionteamexo.data.repositorio.PublicacionRepository;
 import com.example.aplicacionteamexo.data.repositorio.ReaccionRepository;
+import com.example.aplicacionteamexo.data.repositorio.UsuarioRepository;
+
 import recurso.RecursoServiceGrpc;
 
-
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +76,7 @@ public class PublicacionAdapter extends RecyclerView.Adapter<PublicacionAdapter.
     private String rolUsuario;
     private int usuarioActualId;
 
-    private Publicacion publicacion;
+
 
     public PublicacionAdapter(List<PublicacionConRecurso> listaPublicaciones, boolean esModerador, Context context) {
         this.listaPublicaciones = listaPublicaciones;
@@ -156,15 +161,15 @@ public class PublicacionAdapter extends RecyclerView.Adapter<PublicacionAdapter.
         }
 
 
-        publicacion = publicacionConRecurso.toPublicacion();
+        Publicacion publicacion = publicacionConRecurso.toPublicacion(); // ← ahora es local
         int publicacionId = publicacion.getIdentificador();
+        Log.d("onBindViewHolder", "Bind de publicación ID: " + publicacionId + " en posición: " + position);
 
         holder.txtTitulo.setText(publicacion.getTitulo());
 
         configurarListenerReacciones(holder, publicacion);
-        cargarReaccionesExistentes(publicacionId, holder);
+        cargarReaccionesExistentes(publicacion, publicacionId, holder);
         actualizarBotonesReaccion(holder, publicacion);
-
 
         List<Comentario> comentarios = cacheComentarios.get(publicacionId);
         Context context = holder.itemView.getContext();
@@ -204,6 +209,8 @@ public class PublicacionAdapter extends RecyclerView.Adapter<PublicacionAdapter.
             String textoComentario = holder.etComentario.getText().toString().trim();
             if (!textoComentario.isEmpty()) {
                 crearComentario(publicacion, textoComentario, holder);  // Esto lo tienes bien
+                Log.d("BtnComentario", "Click: publicacionId=" + publicacion.getIdentificador() + ", texto=" + textoComentario);
+
                 holder.etComentario.setText(""); // Limpia el campo después de enviar
             } else {
                 Toast.makeText(context, "El comentario no puede estar vacío", Toast.LENGTH_SHORT).show();
@@ -235,7 +242,7 @@ public class PublicacionAdapter extends RecyclerView.Adapter<PublicacionAdapter.
             new Thread(() -> {
                 try {
                     ManagedChannel channel = ManagedChannelBuilder
-                            .forAddress("192.168.100.28", 50054)
+                            .forAddress("192.168.233.88", 50054)
                             .usePlaintext()
                             .maxInboundMessageSize(50 * 1024 * 1024)
                             .build();
@@ -305,7 +312,7 @@ public class PublicacionAdapter extends RecyclerView.Adapter<PublicacionAdapter.
     }
 
 
-    private void cargarReaccionesExistentes(int publicacionId, PublicacionViewHolder holder) {
+    private void cargarReaccionesExistentes(Publicacion publicacion, int publicacionId, PublicacionViewHolder holder) {
         ReaccionRepository reaccionRepository = new ReaccionRepository();
         int usuarioIdActual = sharedPreferences.getInt("usuarioId", -1);
         reaccionRepository.obtenerReaccionesPorPublicacion(publicacionId)
@@ -397,7 +404,7 @@ public class PublicacionAdapter extends RecyclerView.Adapter<PublicacionAdapter.
                     Toast.makeText(holder.itemView.getContext(),
                             "Reacción eliminada", Toast.LENGTH_SHORT).show();
                     notifyItemChanged(holder.getAdapterPosition());
-                    cargarReaccionesExistentes(publicacion.getIdentificador(), holder);
+                    cargarReaccionesExistentes(publicacion, publicacion.getIdentificador(), holder);
                     actualizarBotonesReaccion(holder, publicacion);
 
                 } else {
@@ -439,7 +446,7 @@ public class PublicacionAdapter extends RecyclerView.Adapter<PublicacionAdapter.
 
                     Toast.makeText(holder.itemView.getContext(),
                             "Reacción actualizada", Toast.LENGTH_SHORT).show();
-                    cargarReaccionesExistentes(publicacion.getIdentificador(), holder);
+                    cargarReaccionesExistentes(publicacion, publicacion.getIdentificador(), holder);
                     actualizarBotonesReaccion(holder, publicacion);
 
                 } else {
@@ -483,7 +490,7 @@ public class PublicacionAdapter extends RecyclerView.Adapter<PublicacionAdapter.
                     Toast.makeText(holder.itemView.getContext(),
                             "Reacción registrada", Toast.LENGTH_SHORT).show();
                     //publicacion.setTipoReaccionUsuarioActual(tipo);
-                    cargarReaccionesExistentes(publicacion.getIdentificador(), holder);
+                    cargarReaccionesExistentes(publicacion, publicacion.getIdentificador(), holder);
                     actualizarBotonesReaccion(holder, publicacion);
 
 
@@ -499,9 +506,6 @@ public class PublicacionAdapter extends RecyclerView.Adapter<PublicacionAdapter.
                 Toast.makeText(holder.itemView.getContext(), "Error de red", Toast.LENGTH_SHORT).show();
             }
         });
-
-        //cargarReaccionesExistentes(publicacion.getIdentificador(), holder);
-        //actualizarBotonesReaccion(holder, publicacion);
 
     }
     private void actualizarBotonesReaccion(@NonNull PublicacionViewHolder holder, Publicacion publicacion) {
@@ -544,28 +548,70 @@ public class PublicacionAdapter extends RecyclerView.Adapter<PublicacionAdapter.
                 texto
         );
 
-        ComentarioRepository comentarioRepository = new ComentarioRepository(); // Puedes inyectarlo también si lo prefieres
+        Log.d("ComentarioRegistro", "Enviando comentario: publicacionId=" + publicacion.getIdentificador() + ", usuarioId=" + usuarioId + ", texto=" + texto);
+
+        ComentarioRepository comentarioRepository = new ComentarioRepository();
+        UsuarioRepository usuarioRepository = new UsuarioRepository();
 
         comentarioRepository.crearComentario(solicitud, new Callback<Comentario>() {
             @Override
             public void onResponse(Call<Comentario> call, Response<Comentario> response) {
+                Log.d("CrearComentario", "Código: " + response.code());
+                Log.d("CrearComentario", "Body: " + new Gson().toJson(response.body()));
+
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(holder.itemView.getContext(), "Comentario enviado", Toast.LENGTH_SHORT).show();
+                    cacheComentarios.remove(publicacion.getIdentificador());
+                    // Reconsultar la lista completa desde el servidor para evitar inconsistencias
+                    comentarioRepository.obtenerComentariosPorPublicacion(publicacion.getIdentificador(), new Callback<List<Comentario>>() {
+                        @Override
+                        public void onResponse(Call<List<Comentario>> call, Response<List<Comentario>> responseComentarios) {
+                            if (responseComentarios.isSuccessful() && responseComentarios.body() != null) {
 
-                    Comentario nuevoComentario = response.body();
+                                List<Comentario> comentariosActualizados = responseComentarios.body();
+                                cacheComentarios.put(publicacion.getIdentificador(), comentariosActualizados);
 
-                    // Agrega el nuevo comentario al cache
-                    List<Comentario> comentarios = cacheComentarios.get(publicacion.getIdentificador());
-                    if (comentarios != null) {
-                        comentarios.add(nuevoComentario);
-                        holder.comentarioAdapter.notifyItemInserted(comentarios.size() - 1);
-                    }
+                                // Cargar nombre del usuario si no está cacheado
+                                usuarioRepository.obtenerUsuarioPorId(usuarioId, new Callback<UsuarioRespuestaBusqueda>() {
+                                    @Override
+                                    public void onResponse(Call<UsuarioRespuestaBusqueda> call, Response<UsuarioRespuestaBusqueda> responseUsuario) {
+                                        UsuarioRespuestaBusqueda r = responseUsuario.body();
+                                        Usuario u = (responseUsuario.isSuccessful() && r != null && r.isOk()) ? r.getUsuario() : null;
+                                        String nombre = u != null ? u.getNombreUsuario() : "Usuario " + usuarioId;
 
-                    // Notifica al adapter de que hay un nuevo comentario
-                    notifyItemChanged(holder.getAdapterPosition());
+                                        // Asignar el cache de nombre si el adapter ya está
+                                        if (holder.comentarioAdapter != null) {
+                                            holder.comentarioAdapter.getCacheUsuarios().put(usuarioId, nombre);
+                                            holder.comentarioAdapter.actualizarComentarios(comentariosActualizados);
+                                        } else {
+                                            ComentarioAdapter nuevoAdapter = crearComentarioAdapter(comentariosActualizados, publicacion.getIdentificador(), holder.itemView.getContext());
+                                            nuevoAdapter.getCacheUsuarios().put(usuarioId, nombre);
+                                            holder.rvComentarios.setLayoutManager(new LinearLayoutManager(holder.itemView.getContext()));
+                                            holder.rvComentarios.setAdapter(nuevoAdapter);
+                                            holder.comentarioAdapter = nuevoAdapter;
+                                        }
 
-                    // Limpia el campo
-                    holder.etComentario.setText("");
+                                        holder.etComentario.setText("");
+                                        Toast.makeText(holder.itemView.getContext(), "Comentario enviado", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<UsuarioRespuestaBusqueda> call, Throwable t) {
+                                        Log.e("Comentario", "Error al obtener nombre de usuario", t);
+                                        if (holder.comentarioAdapter != null) {
+                                            holder.comentarioAdapter.actualizarComentarios(comentariosActualizados);
+                                        }
+                                        Toast.makeText(holder.itemView.getContext(), "Comentario enviado (sin nombre)", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<Comentario>> call, Throwable t) {
+                            Log.e("ActualizarComentarios", "Error al obtener lista de comentarios", t);
+                            Toast.makeText(holder.itemView.getContext(), "Comentario enviado, pero no se actualizaron", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 } else {
                     Toast.makeText(holder.itemView.getContext(), "No se pudo enviar el comentario", Toast.LENGTH_SHORT).show();
                 }
@@ -578,6 +624,9 @@ public class PublicacionAdapter extends RecyclerView.Adapter<PublicacionAdapter.
             }
         });
     }
+
+
+
 
 
     @Override

@@ -21,11 +21,16 @@ import com.example.aplicacionteamexo.data.modelo.comentario.Comentario;
 import com.example.aplicacionteamexo.data.repositorio.ComentarioRepository;
 import com.example.aplicacionteamexo.data.repositorio.UsuarioRepository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import android.content.Context;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+
 
 public class ComentarioAdapter extends RecyclerView.Adapter<ComentarioAdapter.ComentarioViewHolder> {
 
@@ -35,6 +40,8 @@ public class ComentarioAdapter extends RecyclerView.Adapter<ComentarioAdapter.Co
     private Context context;
     private ComentarioRepository comentarioRepository;
     private ComentarioCallback callback;
+
+    private Map<Integer, String> cacheUsuarios = new HashMap<>();
 
     public ComentarioAdapter(List<Comentario> listaComentarios, int usuarioActualId, Context context, ComentarioCallback callback) {
         this.listaComentarios = listaComentarios;
@@ -67,19 +74,28 @@ public class ComentarioAdapter extends RecyclerView.Adapter<ComentarioAdapter.Co
             holder.btnMenuComentario.setVisibility(View.GONE);
         }
 
-        usuarioRepository.obtenerUsuarioPorId(usuarioId, new Callback<UsuarioRespuestaBusqueda>() {
-            @Override
-            public void onResponse(Call<UsuarioRespuestaBusqueda> call, Response<UsuarioRespuestaBusqueda> response) {
-                UsuarioRespuestaBusqueda r = response.body();
-                Usuario u = (response.isSuccessful() && r != null && r.isOk()) ? r.getUsuario() : null;
-                holder.tvNombreUsuario.setText(u != null ? u.getNombreUsuario() : "Usuario " + usuarioId);
-            }
+        if (cacheUsuarios.containsKey(usuarioId)) {
+            holder.tvNombreUsuario.setText(cacheUsuarios.get(usuarioId));
+        } else if (usuarioId > 0) {
+            usuarioRepository.obtenerUsuarioPorId(usuarioId, new Callback<UsuarioRespuestaBusqueda>() {
+                @Override
+                public void onResponse(Call<UsuarioRespuestaBusqueda> call, Response<UsuarioRespuestaBusqueda> response) {
+                    UsuarioRespuestaBusqueda r = response.body();
+                    Usuario u = (response.isSuccessful() && r != null && r.isOk()) ? r.getUsuario() : null;
+                    String nombre = u != null ? u.getNombreUsuario() : "Usuario " + usuarioId;
+                    cacheUsuarios.put(usuarioId, nombre);
+                    holder.tvNombreUsuario.setText(nombre);
+                }
 
-            @Override
-            public void onFailure(Call<UsuarioRespuestaBusqueda> call, Throwable t) {
-                holder.tvNombreUsuario.setText("Error al cargar usuario");
-            }
-        });
+                @Override
+                public void onFailure(Call<UsuarioRespuestaBusqueda> call, Throwable t) {
+                    holder.tvNombreUsuario.setText("Error al cargar usuario");
+                }
+            });
+        } else {
+            holder.tvNombreUsuario.setText("Usuario desconocido");
+        }
+
 
     }
 
@@ -158,6 +174,15 @@ public class ComentarioAdapter extends RecyclerView.Adapter<ComentarioAdapter.Co
                 Toast.makeText(context, "Error al eliminar el comentario", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void actualizarComentarios(List<Comentario> nuevosComentarios) {
+        this.listaComentarios = nuevosComentarios;
+        notifyDataSetChanged();
+    }
+
+    public Map<Integer, String> getCacheUsuarios() {
+        return cacheUsuarios;
     }
 
 
