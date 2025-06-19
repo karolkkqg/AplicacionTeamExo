@@ -19,6 +19,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.aplicacionteamexo.grpc.recurso.RecursoServiceGrpc;
+import com.example.aplicacionteamexo.grpc.recurso.CrearRecursoRequest;
+import com.example.aplicacionteamexo.grpc.recurso.CrearRecursoResponse;
 import com.example.aplicacionteamexo.utils.Validador;
 import com.google.protobuf.ByteString;
 
@@ -32,8 +35,7 @@ import java.io.InputStream;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
-import recurso.Recurso;
-import recurso.RecursoServiceGrpc;
+
 
 public class PantallaSubirPost extends AppCompatActivity {
 
@@ -210,7 +212,7 @@ public class PantallaSubirPost extends AppCompatActivity {
 
         RecursoServiceGrpc.RecursoServiceStub stub = RecursoServiceGrpc.newStub(channel);
 
-        Recurso.CrearRecursoRequest.Builder builder = Recurso.CrearRecursoRequest.newBuilder()
+        CrearRecursoRequest.Builder builder = CrearRecursoRequest.newBuilder()
                 .setTipo(tipoRecurso)
                 .setIdentificador((int) (System.currentTimeMillis() % 100000))
                 .setFormato(formato)
@@ -225,9 +227,9 @@ public class PantallaSubirPost extends AppCompatActivity {
             builder.setDuracion(resolucionODuracion);
         }
 
-        stub.crearRecurso(builder.build(), new StreamObserver<Recurso.CrearRecursoResponse>() {
+        stub.crearRecurso(builder.build(), new StreamObserver<CrearRecursoResponse>() {
             @Override
-            public void onNext(Recurso.CrearRecursoResponse value) {
+            public void onNext(CrearRecursoResponse value) {
                 runOnUiThread(() -> {
                     if (value.getExito()) {
                         Toast.makeText(PantallaSubirPost.this, "" + value.getMensaje(), Toast.LENGTH_LONG).show();

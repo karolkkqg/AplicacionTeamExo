@@ -2,6 +2,9 @@ syntax = "proto3";
 
 package recurso;
 
+option java_package = "com.example.aplicacionteamexo.grpc.recurso";
+option java_multiple_files = true;
+
 /**
  * Servicio para la gestión de recursos multimedia.
  * Permite crear y descargar recursos como fotos, videos o audios.

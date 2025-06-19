@@ -21,6 +21,7 @@ message EstadisticasRequest {}
 message TopPublicacion {
   int32 publicacionId = 1;
   int32 total = 2;
+  string titulo = 3;
 }
 
 /**
@@ -29,6 +30,11 @@ message TopPublicacion {
 message ConteoPorTipo {
   string tipo = 1;
   int32 total = 2;
+}
+
+message UsuarioTop {
+  int32 usuarioId = 1;
+  string nombre = 2;
 }
 
 /**
@@ -42,9 +48,9 @@ message EstadisticasResponse {
   string diaConMasPublicaciones = 4;
   int32 publicacionesEnEseDia = 5;
 
-  int32 usuarioTopPublicaciones = 6;
-  int32 usuarioTopReacciones = 7;
-  int32 usuarioTopComentarios = 8;
+  UsuarioTop usuarioTopPublicaciones = 6;
+  UsuarioTop usuarioTopReacciones = 7;
+  UsuarioTop usuarioTopComentarios = 8;
 
   repeated ConteoPorTipo recursosPorTipo = 9;
 

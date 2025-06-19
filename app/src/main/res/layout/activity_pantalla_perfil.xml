@@ -9,8 +9,6 @@
     tools:context=".PantallaPerfil">
 
 
-
-    <!-- Barra superior -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"

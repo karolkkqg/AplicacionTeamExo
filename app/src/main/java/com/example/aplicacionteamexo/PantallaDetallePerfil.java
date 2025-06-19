@@ -1,5 +1,8 @@
 package com.example.aplicacionteamexo;
 
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.MotionEvent;
@@ -46,6 +49,9 @@ public class PantallaDetallePerfil extends AppCompatActivity {
         etApellidosDetalle = findViewById(R.id.etApellidos);
         etCorreoDetalle = findViewById(R.id.etCorreo);
         tvRolDetalle = findViewById(R.id.tvRol);
+
+        Button btnBorrarCuenta = findViewById(R.id.btnBorrarCuenta);
+        btnBorrarCuenta.setOnClickListener(v -> mostrarDialogoConfirmacion());
 
         etContrasena.setVisibility(View.GONE);
         btnGuardarContrasena.setVisibility(View.GONE);
@@ -114,14 +120,28 @@ public class PantallaDetallePerfil extends AppCompatActivity {
                     etApellidosDetalle.setText(u.apellidos);
                     etCorreoDetalle.setText(u.correo);
                     tvRolDetalle.setText("Rol: "+ u.rol);
+                } else if (response.code() == 401) {
+                    redirigirAlLogin();
                 } else {
-                    Toast.makeText(PantallaDetallePerfil.this, "Error al obtener perfil", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PantallaDetallePerfil.this, "Ocurrió un error con el servidor", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<UsuarioRespuesta> call, Throwable t) {
-                Toast.makeText(PantallaDetallePerfil.this, "Error de red", Toast.LENGTH_SHORT).show();
+                boolean estaConectado = false;
+
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+                if (connectivityManager != null) {
+                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                    estaConectado = networkInfo != null && networkInfo.isConnected();
+                }
+
+                if (estaConectado) {
+                    Toast.makeText(PantallaDetallePerfil.this, "Ocurrió un problema con el servidor", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PantallaDetallePerfil.this, "Sin conexión a Internet. Verifica tu red.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -173,29 +193,40 @@ public class PantallaDetallePerfil extends AppCompatActivity {
             public void onResponse(Call<UsuarioRespuesta> call, Response<UsuarioRespuesta> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(PantallaDetallePerfil.this, "Perfil actualizado correctamente", Toast.LENGTH_SHORT).show();
+                } else if (response.code() == 401) {
+                    redirigirAlLogin();
                 } else {
-                    int code = response.code();
                     String mensaje;
-
-                    switch (code) {
+                    switch (response.code()) {
                         case 400:
                             mensaje = "El correo ya está registrado a otro usuario";
                             break;
                         case 500:
-                            mensaje = "Ha ocurdido un error con el servidor. Puede reportarlo";
+                            mensaje = "Ha ocurrido un error con el servidor. Puede reportarlo";
                             break;
                         default:
-                            mensaje = "Error desconocido. Código: " + code;
+                            mensaje = "Error desconocido. Código: " + response.code();
                             break;
                     }
-
                     Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<UsuarioRespuesta> call, Throwable t) {
-                Toast.makeText(PantallaDetallePerfil.this, "Fallo en la conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                boolean estaConectado = false;
+
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+                if (connectivityManager != null) {
+                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                    estaConectado = networkInfo != null && networkInfo.isConnected();
+                }
+
+                if (estaConectado) {
+                    Toast.makeText(PantallaDetallePerfil.this, "Ocurrió un problema con el servidor", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PantallaDetallePerfil.this, "Sin conexión a Internet. Verifica tu red.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -241,9 +272,86 @@ public class PantallaDetallePerfil extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<UsuarioRespuesta> call, Throwable t) {
-                Toast.makeText(PantallaDetallePerfil.this, "Fallo en la conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                boolean estaConectado = false;
+
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+                if (connectivityManager != null) {
+                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                    estaConectado = networkInfo != null && networkInfo.isConnected();
+                }
+
+                if (estaConectado) {
+                    Toast.makeText(PantallaDetallePerfil.this, "Ocurrió un problema con el servidor", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PantallaDetallePerfil.this, "Sin conexión a Internet. Verifica tu red.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
+
+    private void redirigirAlLogin() {
+        Toast.makeText(PantallaDetallePerfil.this, "Sesión expirada. Inicia sesión nuevamente.", Toast.LENGTH_LONG).show();
+        getSharedPreferences("auth", MODE_PRIVATE).edit().clear().apply();
+        Intent intent = new Intent(PantallaDetallePerfil.this, ActividadLogin.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private void mostrarDialogoConfirmacion() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Eliminar cuenta")
+                .setMessage("¿Estás segura de que quieres borrar tu cuenta? Esta acción no se puede deshacer.")
+                .setPositiveButton("Sí, eliminar", (dialog, which) -> eliminarCuenta())
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void eliminarCuenta() {
+        String token = getSharedPreferences("auth", MODE_PRIVATE).getString("token", null);
+
+        if (token == null) {
+            Toast.makeText(this, "Token no disponible", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        UsuarioAPI api = RetrofitClient.getInstance().create(UsuarioAPI.class);
+        Call<UsuarioRespuesta> call = api.eliminarUsuario("Bearer " + token, usuarioIdGuardado);
+
+        call.enqueue(new Callback<UsuarioRespuesta>() {
+            @Override
+            public void onResponse(Call<UsuarioRespuesta> call, Response<UsuarioRespuesta> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(PantallaDetallePerfil.this, "Cuenta eliminada correctamente", Toast.LENGTH_LONG).show();
+
+                    getSharedPreferences("auth", MODE_PRIVATE).edit().clear().apply();
+                    Intent intent = new Intent(PantallaDetallePerfil.this, ActividadLogin.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(PantallaDetallePerfil.this, "No se pudo eliminar la cuenta. Código: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UsuarioRespuesta> call, Throwable t) {
+                boolean estaConectado = false;
+
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+                if (connectivityManager != null) {
+                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                    estaConectado = networkInfo != null && networkInfo.isConnected();
+                }
+
+                if (estaConectado) {
+                    Toast.makeText(PantallaDetallePerfil.this, "Ocurrió un problema con el servidor", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PantallaDetallePerfil.this, "Sin conexión a Internet. Verifica tu red.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
 
 }

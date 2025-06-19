@@ -4,14 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:scrollbars="vertical"
-    android:fadeScrollbars="true">
+    android:fadeScrollbars="true"
+    android:background="#FFFFFF">
 
     <LinearLayout
         android:id="@+id/layoutContenedor"
         android:orientation="vertical"
         android:padding="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,7 +45,8 @@
             android:layout_height="wrap_content"
             android:text="Total publicaciones:"
             android:paddingTop="16dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="#000000"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -63,30 +66,9 @@
                 android:id="@+id/txtDiaMasActivo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Día con más publicaciones:" />
+                android:text="Día con más publicaciones:"
+                android:textColor="#000000" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/txtNotificaciones"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Notificaciones pendientes:" />
-
-        <!-- Tabla para recursos por tipo -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Recursos por tipo:"
-            android:paddingTop="16dp"
-            android:textStyle="bold" />
-
-        <TableLayout
-            android:id="@+id/tablaRecursos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="*"
-            android:paddingTop="8dp">
-        </TableLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -102,18 +84,31 @@
             android:contentDescription="Ícono de likes"
             android:layout_marginEnd="8dp"/>
 
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Publicación con más Likes:"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="#000000" />
+
         </LinearLayout>
+        <TextView
+            android:id="@+id/txtTituloTopLikes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Título: --"
+            android:textStyle="italic"
+            android:paddingBottom="8dp"
+            android:textColor="#000000" />
 
         <TextView
             android:id="@+id/txtTopLikes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ID: --, Total: --" />
+            android:text="ID: --, Total: --"
+            android:textColor="#000000" />
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -133,16 +128,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Publicación con más Comentarios:"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="#000000"/>
+
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/txtTituloTopLikes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Título: --"
-            android:textStyle="italic"
-            android:paddingBottom="8dp" />
 
         <TextView
             android:id="@+id/txtTituloTopComentarios"
@@ -150,13 +140,15 @@
             android:layout_height="wrap_content"
             android:text="Título: --"
             android:textStyle="italic"
-            android:paddingBottom="8dp" />
+            android:paddingBottom="8dp"
+            android:textColor="#000000" />
 
         <TextView
             android:id="@+id/txtTopComentarios"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ID: --, Total: --" />
+            android:text="ID: --, Total: --"
+            android:textColor="#000000" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -176,14 +168,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Usuario más activo por publicaciones:"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="#000000" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/txtUsuarioTopPublicaciones"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nombre: --" />
+            android:text="Nombre: --"
+            android:textColor="#000000" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -203,14 +197,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Usuario con más reacciones:"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="#000000" />
         </LinearLayout>
+
 
         <TextView
             android:id="@+id/txtUsuarioTopReacciones"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nombre: --" />
+            android:text="Nombre: --"
+            android:textColor="#000000" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -230,14 +227,40 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Usuario con más comentarios:"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="#000000" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/txtUsuarioTopComentarios"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nombre: --" />
+            android:text="Nombre: --"
+            android:textColor="#000000" />
+
+        <TextView
+            android:id="@+id/txtNotificaciones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Notificaciones pendientes:"
+            android:textColor="#000000" />
+
+        <!-- Tabla para recursos por tipo -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Recursos por tipo:"
+            android:paddingTop="16dp"
+            android:textStyle="bold"
+            android:textColor="#000000" />
+
+        <TableLayout
+            android:id="@+id/tablaRecursos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*"
+            android:paddingTop="8dp">
+        </TableLayout>
 
         <!-- Gráfica circular -->
         <TextView
@@ -245,13 +268,20 @@
             android:layout_height="wrap_content"
             android:text="Distribución de recursos"
             android:paddingTop="16dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="#000000" />
 
-        <com.github.mikephil.charting.charts.PieChart
-            android:id="@+id/miPieChart"
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChart"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_marginTop="8dp" />
+            android:layout_height="300dp" />
+
+        <Button
+            android:id="@+id/btnDescargarEstadisticas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Descargar reporte"
+            android:layout_marginTop="16dp" />
 
     </LinearLayout>
 </ScrollView>

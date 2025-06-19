@@ -1,11 +1,15 @@
 package com.example.aplicacionteamexo;
 
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -31,8 +35,8 @@ public class ActividadLogin extends AppCompatActivity {
         EditText etPassword = findViewById(R.id.etPassword);
         Button btnIniciarSesion = findViewById(R.id.btnIniciarSesion);
         Button btnRegistrarse = findViewById(R.id.btnRegistrarse);
+        ProgressBar barraDeProgreso = findViewById(R.id.barraProgreso);
 
-        // Mostrar u ocultar la contraseña al tocar el ícono
         etPassword.setOnTouchListener((v, event) -> {
             final int DRAWABLE_END = 2;
             if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -50,15 +54,13 @@ public class ActividadLogin extends AppCompatActivity {
             }
             return false;
         });
-
-        // Navegar al registro
         btnRegistrarse.setOnClickListener(v -> {
             Intent intent = new Intent(ActividadLogin.this, actividadRegistro.class);
             startActivity(intent);
         });
 
-        // Ejecutar login al dar clic en "Iniciar sesión"
         btnIniciarSesion.setOnClickListener(v -> {
+            barraDeProgreso.setVisibility(View.VISIBLE);
             String correo = etCorreo.getText().toString().trim();
             String contrasena = etPassword.getText().toString();
 
@@ -71,6 +73,7 @@ public class ActividadLogin extends AppCompatActivity {
             if (errPass != null) errores.append("- ").append(errPass).append("\n");
 
             if (errores.length() > 0) {
+                barraDeProgreso.setVisibility(View.GONE);
                 Toast.makeText(getApplicationContext(), errores.toString(), Toast.LENGTH_LONG).show();
                 return;
             }
@@ -78,7 +81,7 @@ public class ActividadLogin extends AppCompatActivity {
             new Thread(() -> {
                 try {
                     ManagedChannel channel = ManagedChannelBuilder
-                            .forAddress("192.168.0.108", 50051) // IP y puerto del servidor gRPC
+                            .forAddress("192.168.0.109", 50051)
                             .usePlaintext()
                             .build();
 
@@ -92,6 +95,7 @@ public class ActividadLogin extends AppCompatActivity {
                     LoginResponse response = stub.login(request);
 
                     runOnUiThread(() -> {
+                        barraDeProgreso.setVisibility(View.GONE);
                         if (response.getExito()) {
                             String token = response.getToken();
                             String mensaje = response.getMensaje();
@@ -103,27 +107,27 @@ public class ActividadLogin extends AppCompatActivity {
 
                             Toast.makeText(this, "Inicio de sesión exitoso: " + mensaje, Toast.LENGTH_SHORT).show();
 
-                            // Redirigir a pantalla principal si deseas
-                            // startActivity(new Intent(this, ActividadPrincipal.class));
-                            // finish();
-                            String nombreUsuario = response.getNombreUsuario(); // 👈 así obtienes el nombre de usuario
+                            String nombreUsuario = response.getNombreUsuario();
 
-                            // Puedes guardarlo si lo necesitas luego
                             getSharedPreferences("auth", MODE_PRIVATE)
                                     .edit()
                                     .putString("nombreUsuario", nombreUsuario)
                                     .apply();
 
-                            String rol = response.getRol(); // 👈 Obtener rol
-                            int usuarioId = response.getUsuarioId(); // 👈 Obtener usuarioId
+                            String rol = response.getRol();
+                            int usuarioId = response.getUsuarioId();
 
                             getSharedPreferences("auth", MODE_PRIVATE)
                                     .edit()
                                     .putString("token", token)
                                     .putString("nombreUsuario", nombreUsuario)
-                                    .putString("rol", rol) // 👈 Guardar rol
-                                    .putInt("usuarioId", usuarioId) // 👈 Guardar usuarioId
+                                    .putString("rol", rol)
+                                    .putInt("usuarioId", usuarioId)
                                     .apply();
+
+                            Intent intent = new Intent(ActividadLogin.this, PantallaEstadisticas.class); // Reemplaza con la actividad destino
+                            startActivity(intent);
+                            finish();
 
                         } else {
                             Toast.makeText(this, "Error: " + response.getMensaje(), Toast.LENGTH_SHORT).show();
@@ -133,9 +137,23 @@ public class ActividadLogin extends AppCompatActivity {
                     channel.shutdown();
 
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    runOnUiThread(() ->
-                            Toast.makeText(this, "Error de conexión con el servidor", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> {
+                        barraDeProgreso.setVisibility(View.GONE);
+
+                        boolean estaConectado = false;
+
+                        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+                        if (connectivityManager != null) {
+                            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                            estaConectado = networkInfo != null && networkInfo.isConnected();
+                        }
+
+                        if (estaConectado) {
+                            Toast.makeText(this, "Ocurrió un problema con el servidor", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, "Sin conexión a Internet. Verifica tu red.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }).start();
         });

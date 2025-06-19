@@ -7,6 +7,7 @@ import com.example.aplicacionteamexo.data.modelo.UsuarioRespuesta;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.POST;
 import retrofit2.http.GET;
 import retrofit2.http.PUT;
@@ -29,5 +30,11 @@ public interface UsuarioAPI {
             @Header("Authorization") String token,
             @Path("usuarioId") int usuarioId,
             @Body ContrasenaRequest body
+    );
+
+    @DELETE("api/usuarios/{usuarioId}")
+    Call<UsuarioRespuesta> eliminarUsuario(
+            @Header("Authorization") String token,
+            @Path("usuarioId") int usuarioId
     );
 }
