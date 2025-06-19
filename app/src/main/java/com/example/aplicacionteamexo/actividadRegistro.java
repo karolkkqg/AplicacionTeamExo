@@ -138,7 +138,7 @@ public class actividadRegistro extends AppCompatActivity {
             String errPass = Validador.validarPassword(password);
             if (errPass != null) errores.append("- ").append(errPass).append("\n");
 
-            if (!rol.equals("Moderador")) {
+            if (rol.equals("Moderador")) {
                 if (claveRol.isEmpty()) {
                     errores.append("- La clave del rol no puede estar vacía.\n");
                 } else if (!claveRol.equals("uwo193d")) {
@@ -146,7 +146,7 @@ public class actividadRegistro extends AppCompatActivity {
                 }
             }
 
-            if (!rol.equals("Admnistrador")) {
+            if (rol.equals("Admnistrador")) {
                 if (claveRol.isEmpty()) {
                     errores.append("- La clave del rol no puede estar vacía.\n");
                 } else if (!claveRol.equals("29dmao2")) {
@@ -201,7 +201,19 @@ public class actividadRegistro extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<UsuarioRespuesta> call, Throwable t) {
-                    Toast.makeText(getApplicationContext(), "Fallo: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    boolean estaConectado = false;
+
+                    ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+                    if (connectivityManager != null) {
+                        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                        estaConectado = networkInfo != null && networkInfo.isConnected();
+                    }
+
+                    if (estaConectado) {
+                        Toast.makeText(actividadRegistro.this, "Ocurrió un problema con el servidor", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(actividadRegistro.this, "Sin conexión a Internet. Verifica tu red.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         });

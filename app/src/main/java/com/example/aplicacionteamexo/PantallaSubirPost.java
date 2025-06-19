@@ -2,6 +2,8 @@ package com.example.aplicacionteamexo;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
@@ -23,6 +25,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.aplicacionteamexo.grpc.recurso.RecursoServiceGrpc;
 import com.example.aplicacionteamexo.grpc.recurso.CrearRecursoRequest;
 import com.example.aplicacionteamexo.grpc.recurso.CrearRecursoResponse;
+import com.example.aplicacionteamexo.utilidades.Configuracion;
 import com.example.aplicacionteamexo.utils.Validador;
 import com.google.protobuf.ByteString;
 
@@ -116,7 +119,6 @@ public class PantallaSubirPost extends AppCompatActivity {
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
                 archivoSeleccionadoTextView.setText("Error al leer archivo");
             }
         }
@@ -185,9 +187,9 @@ public class PantallaSubirPost extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        String ip = Configuracion.obtenerIP(getApplicationContext());
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://192.168.100.28/api/publicaciones";
+        String url = "http://"+ip+"/api/publicaciones";
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, json,
                 response -> {
@@ -214,8 +216,9 @@ public class PantallaSubirPost extends AppCompatActivity {
 
 
     private void crearRecursoGrpc(int publicacionId, int usuarioId) {
+        String ip = Configuracion.obtenerIP(getApplicationContext());
         ManagedChannel channel = ManagedChannelBuilder
-                .forAddress("192.168.100.28", 50054)
+                .forAddress(ip, 50054)
                 .usePlaintext()
                 .build();
 
@@ -250,6 +253,19 @@ public class PantallaSubirPost extends AppCompatActivity {
 
             @Override
             public void onError(Throwable t) {
+                boolean estaConectado = false;
+
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+                if (connectivityManager != null) {
+                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                    estaConectado = networkInfo != null && networkInfo.isConnected();
+                }
+
+                if (estaConectado) {
+                    Toast.makeText(PantallaSubirPost.this, "Ocurrió un problema con el servidor", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PantallaSubirPost.this, "Sin conexión a Internet. Verifica tu red.", Toast.LENGTH_SHORT).show();
+                }
                 Log.e("gRPC", "Error al crear recurso: " + t.getMessage());
             }
 

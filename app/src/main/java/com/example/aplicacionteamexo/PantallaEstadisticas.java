@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.aplicacionteamexo.utilidades.Configuracion;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -70,6 +72,12 @@ public class PantallaEstadisticas extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pantalla_estadisticas);
 
+        int usuarioId = getSharedPreferences("auth", MODE_PRIVATE).getInt("usuarioId", 0);
+        if (usuarioId != 0) {
+            NotificacionGrpcService notificacionService = new NotificacionGrpcService(this);
+            notificacionService.suscribirseANotificaciones(usuarioId);
+        }
+
         txtTotalPublicaciones = findViewById(R.id.txtTotalPublicaciones);
         txtDiaMasActivo = findViewById(R.id.txtDiaMasActivo);
         txtNotificaciones = findViewById(R.id.txtNotificaciones);
@@ -92,11 +100,15 @@ public class PantallaEstadisticas extends AppCompatActivity {
                 Toast.makeText(this, "Aún no se han cargado las estadísticas", Toast.LENGTH_SHORT).show();
             }
         });
+
+        ImageButton btnAtras = findViewById(R.id.btnRegresar);
+        btnAtras.setOnClickListener(v -> finish());
     }
 
     private void cargarEstadisticas() {
+        String ip = Configuracion.obtenerIP(getApplicationContext());
         ManagedChannel channel = ManagedChannelBuilder
-                .forAddress("192.168.0.109", 50055)
+                .forAddress(ip, 50055)
                 .usePlaintext()
                 .build();
 

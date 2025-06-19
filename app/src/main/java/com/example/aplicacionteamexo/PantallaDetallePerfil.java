@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +40,12 @@ public class PantallaDetallePerfil extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pantalla_detalle_perfil);
+
+        int usuarioId = getSharedPreferences("auth", MODE_PRIVATE).getInt("usuarioId", 0);
+        if (usuarioId != 0) {
+            NotificacionGrpcService notificacionService = new NotificacionGrpcService(this);
+            notificacionService.suscribirseANotificaciones(usuarioId);
+        }
 
         EditText etContrasena = findViewById(R.id.etContrasena);
         Button btnGuardarContrasena = findViewById(R.id.btnGuardarContrasena);
@@ -102,6 +109,9 @@ public class PantallaDetallePerfil extends AppCompatActivity {
             }
             return false;
         });
+
+        ImageButton btnAtras = findViewById(R.id.btnRegresar);
+        btnAtras.setOnClickListener(v -> finish());
     }
 
     private void cargarPerfil(String token) {

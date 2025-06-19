@@ -24,6 +24,10 @@ import com.example.aplicacionteamexo.data.modelo.recurso.RecursoRegistro;
 import com.example.aplicacionteamexo.data.modelo.recurso.RecursoRespuesta;
 import com.example.aplicacionteamexo.data.repositorio.PublicacionRepository;
 import com.example.aplicacionteamexo.data.repositorio.RecursoRepository;
+import com.example.aplicacionteamexo.grpc.recurso.CrearRecursoRequest;
+import com.example.aplicacionteamexo.grpc.recurso.CrearRecursoResponse;
+import com.example.aplicacionteamexo.grpc.recurso.RecursoServiceGrpc;
+import com.example.aplicacionteamexo.utilidades.Configuracion;
 
 
 import org.apache.commons.io.IOUtils;
@@ -33,8 +37,6 @@ import java.io.InputStream;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import recurso.Recurso;
-import recurso.RecursoServiceGrpc;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,7 +48,7 @@ public class PantallaPublicacion extends AppCompatActivity {
 
     private EditText editTitulo, editContenido;
     private Uri archivoUri;
-    private String tipoArchivo; // "Foto", "Video", "Audio"
+    private String tipoArchivo;
     private byte[] archivoBytes;
     private PublicacionRepository publicacionRepository;
     private RecursoRepository recursoRepository;
@@ -118,37 +120,36 @@ public class PantallaPublicacion extends AppCompatActivity {
         );
 
         new Thread(() -> {
+            String ip = Configuracion.obtenerIP(getApplicationContext());
             try {
                 ManagedChannel channel = ManagedChannelBuilder
-                        .forAddress("192.168.0.108", 50051) // ⚠️ Cambia IP si es necesario
+                        .forAddress(ip, 50051)
                         .usePlaintext()
                         .build();
 
                 RecursoServiceGrpc.RecursoServiceBlockingStub stub =
                         RecursoServiceGrpc.newBlockingStub(channel);
 
-                Recurso.CrearRecursoRequest.Builder builder = Recurso.CrearRecursoRequest.newBuilder()
+                CrearRecursoRequest.Builder builder = CrearRecursoRequest.newBuilder()
                         .setTipo(tipoArchivo)
-                        .setIdentificador((int) (Math.random() * 100000)) // Puedes usar uno real o aleatorio
+                        .setIdentificador((int) (Math.random() * 100000))
                         .setFormato(obtenerFormato(archivoUri))
                         .setTamano(archivoBytes.length)
                         .setUsuarioId(usuarioId)
                         .setArchivo(com.google.protobuf.ByteString.copyFrom(archivoBytes));
 
-                // Asignar resolución o duración
                 if (tipoArchivo.equals("Foto") || tipoArchivo.equals("Video")) {
-                    builder.setResolucion(1080); // Aquí puedes usar un valor real si lo tienes
+                    builder.setResolucion(1080);
                 } else if (tipoArchivo.equals("Audio")) {
                     builder.setDuracion(obtenerDuracion(archivoUri));
                 }
 
-                Recurso.CrearRecursoResponse response = stub.crearRecurso(builder.build());
+                CrearRecursoResponse response = stub.crearRecurso(builder.build());
 
                 runOnUiThread(() -> {
                     if (response.getExito()) {
                         Toast.makeText(PantallaPublicacion.this, "Recurso subido", Toast.LENGTH_SHORT).show();
-                        // 👇 Aquí puedes usar null o un identificador si lo manejas del lado del backend
-                        crearPublicacion(titulo, contenido, usuarioId, null); // o poner el ID si lo obtienes
+                        crearPublicacion(titulo, contenido, usuarioId, null);
                     } else {
                         Toast.makeText(PantallaPublicacion.this, "Error: " + response.getMensaje(), Toast.LENGTH_SHORT).show();
                     }
@@ -156,7 +157,6 @@ public class PantallaPublicacion extends AppCompatActivity {
 
                 channel.shutdown();
             } catch (Exception e) {
-                e.printStackTrace();
                 runOnUiThread(() ->
                         Toast.makeText(PantallaPublicacion.this, "Error al subir recurso", Toast.LENGTH_SHORT).show());
             }
@@ -170,7 +170,7 @@ public class PantallaPublicacion extends AppCompatActivity {
                 contenido,
                 "Publicado",
                 usuarioId,
-                recursoId  // Asociar el ID del recurso si existe
+                recursoId
         );
 
         publicacionRepository.crearPublicacion(publicacion)
@@ -222,11 +222,9 @@ public class PantallaPublicacion extends AppCompatActivity {
         }
     }
 
-    // Métodos auxiliares
     private String getFileName(Uri uri) {
         String result = null;
 
-        // Si es un archivo del ContentResolver (ej: Google Drive, Galería, etc.)
         if (uri.getScheme().equals("content")) {
             try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
@@ -238,7 +236,6 @@ public class PantallaPublicacion extends AppCompatActivity {
             }
         }
 
-        // Si no lo obtuvimos, intentar con el path
         if (result == null) {
             result = uri.getLastPathSegment();
         }
@@ -265,7 +262,7 @@ public class PantallaPublicacion extends AppCompatActivity {
             String duracionStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             if (duracionStr != null) {
                 long duracionMs = Long.parseLong(duracionStr);
-                return (int) (duracionMs / 1000); // Convertir a segundos
+                return (int) (duracionMs / 1000);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -39,8 +39,9 @@ import com.example.aplicacionteamexo.data.modelo.recurso.Recurso;
 import com.example.aplicacionteamexo.data.repositorio.ComentarioRepository;
 import com.example.aplicacionteamexo.data.repositorio.PublicacionRepository;
 import com.example.aplicacionteamexo.data.repositorio.ReaccionRepository;
-import recurso.RecursoServiceGrpc;
-
+import com.example.aplicacionteamexo.grpc.recurso.DescargarRecursoRequest;
+import com.example.aplicacionteamexo.grpc.recurso.DescargarRecursoResponse;
+import com.example.aplicacionteamexo.grpc.recurso.RecursoServiceGrpc;
 
 
 import java.io.File;
@@ -243,13 +244,13 @@ public class PublicacionAdapter extends RecyclerView.Adapter<PublicacionAdapter.
                     Log.d("DescargaRecurso", "ID que se envía para descargar: " + publicacionConRecurso.getRecurso().getIdentificador());
                     RecursoServiceGrpc.RecursoServiceBlockingStub recursoStub = RecursoServiceGrpc.newBlockingStub(channel);
 
-                    recurso.Recurso.DescargarRecursoRequest request = recurso.Recurso.DescargarRecursoRequest.newBuilder()
+                    DescargarRecursoRequest request = DescargarRecursoRequest.newBuilder()
 
                             .setTipo(publicacionConRecurso.getRecurso().getTipo()) // Cambia dinámicamente si sabes si es Audio/Video
                             .setIdentificador(publicacionConRecurso.getRecurso().getIdentificador()) // Asegúrate de tener este ID
                             .build();
 
-                    recurso.Recurso.DescargarRecursoResponse response = recursoStub.descargarRecurso(request);
+                    DescargarRecursoResponse response = recursoStub.descargarRecurso(request);
 
                     byte[] archivo = response.getArchivo().toByteArray();
 

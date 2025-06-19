@@ -2,6 +2,8 @@ package com.example.aplicacionteamexo;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +15,9 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -52,8 +57,28 @@ public class PantallaPrincipal extends AppCompatActivity implements OnPublicacio
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pantalla_principal);
 
-        recyclerView = findViewById(R.id.recyclerViewPosts); // Usar variable de clase
+        int usuarioId = getSharedPreferences("auth", MODE_PRIVATE).getInt("usuarioId", 0);
+        if (usuarioId != 0) {
+            NotificacionGrpcService notificacionService = new NotificacionGrpcService(this);
+            notificacionService.suscribirseANotificaciones(usuarioId);
+        }
+
+        View layoutPrincipal = findViewById(R.id.bottom_bar);
+
+        ViewCompat.setOnApplyWindowInsetsListener(layoutPrincipal, (v, insets) -> {
+            Insets barrasSistema = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(0, 0, 0, barrasSistema.bottom);
+            return insets;
+        });
+
+        recyclerView = findViewById(R.id.recyclerViewPosts);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        RecyclerView recyclerView = findViewById(R.id.recyclerViewPosts);
+        recyclerView.setClipToPadding(false);
+
+        int paddingBottomPx = (int) (80 * getResources().getDisplayMetrics().density);
+        recyclerView.setPadding(0, 0, 0, paddingBottomPx);
 
         String rol = getSharedPreferences("auth", MODE_PRIVATE).getString("rol", "fan");
         esModerador = rol.equals("moderador");
@@ -70,6 +95,13 @@ public class PantallaPrincipal extends AppCompatActivity implements OnPublicacio
         ImageButton btnFiltro = findViewById(R.id.btn_filtro);
         btnFiltro.setOnClickListener(v -> mostrarMenuBottomSheet());
 
+        ImageButton btnCasa = findViewById(R.id.btn_home);
+        btnCasa.setOnClickListener(v -> {
+            Intent intent = new Intent(PantallaPrincipal.this, PantallaPrincipal.class);
+            startActivity(intent);
+        });
+
+
         EditText editTextSearch = findViewById(R.id.editTextSearch);
 
         editTextSearch.setOnEditorActionListener((v, actionId, event) -> {
@@ -82,11 +114,17 @@ public class PantallaPrincipal extends AppCompatActivity implements OnPublicacio
                 } else {
                     Toast.makeText(PantallaPrincipal.this, "Ingrese texto para buscar", Toast.LENGTH_SHORT).show();
                 }
-                return true; // Evento consumido
+                return true;
             }
             return false;
         });
 
+        ImageButton btnNotificaciones = findViewById(R.id.btn_notificaciones);
+
+        btnNotificaciones.setOnClickListener(v -> {
+            Intent intent = new Intent(this, PantallaNotificaciones.class);
+            startActivity(intent);
+        });
 
     }
 
@@ -97,7 +135,7 @@ public class PantallaPrincipal extends AppCompatActivity implements OnPublicacio
             @Override
             public void onResponse(Call<List<PublicacionConRecurso>> call, Response<List<PublicacionConRecurso>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    listaPublicacionesOriginal = response.body(); // 👈 Guarda lista completa
+                    listaPublicacionesOriginal = response.body();
                     List<PublicacionConRecurso> publicaciones = new ArrayList<>(listaPublicacionesOriginal);
 
                     Collections.sort(publicaciones, (p1, p2) -> p2.getFechaCreacion().compareTo(p1.getFechaCreacion()));
@@ -111,14 +149,26 @@ public class PantallaPrincipal extends AppCompatActivity implements OnPublicacio
 
             @Override
             public void onFailure(Call<List<PublicacionConRecurso>> call, Throwable t) {
-                Toast.makeText(PantallaPrincipal.this, "Error de red", Toast.LENGTH_SHORT).show();
+                boolean estaConectado = false;
+
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+                if (connectivityManager != null) {
+                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                    estaConectado = networkInfo != null && networkInfo.isConnected();
+                }
+
+                if (estaConectado) {
+                    Toast.makeText(PantallaPrincipal.this, "Ocurrió un problema con el servidor", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PantallaPrincipal.this, "Sin conexión a Internet. Verifica tu red.", Toast.LENGTH_SHORT).show();
+                }
                 Log.e("PantallaPrincipal", "Error al cargar publicaciones", t);
             }
         });
     }
 
     public void onPublicacionClick(Publicacion publicacion) {
-        // PARA EDITAR LA PUBLICACION
+
 
     }
 
@@ -162,7 +212,6 @@ public class PantallaPrincipal extends AppCompatActivity implements OnPublicacio
         bottomSheetDialog.show();
     }
 
-     // guarda todas las publicaciones
 
     private void filtrarPorTipoRecurso(String tipo) {
         if (listaPublicacionesOriginal == null) return;

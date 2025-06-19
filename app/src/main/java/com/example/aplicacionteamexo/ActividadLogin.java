@@ -20,6 +20,7 @@ import okhttp3.Request;  // ✅ ESTA ES LA CORRECTA
 import com.example.aplicacionteamexo.grpc.LoginRequest;
 import com.example.aplicacionteamexo.grpc.LoginResponse;
 import com.example.aplicacionteamexo.grpc.UsuarioServiceGrpc;
+import com.example.aplicacionteamexo.utilidades.Configuracion;
 import com.example.aplicacionteamexo.utils.Validador;
 
 import io.grpc.ManagedChannel;
@@ -75,8 +76,8 @@ public class ActividadLogin extends AppCompatActivity {
             String errCorreo = Validador.validarCorreo(correo);
             if (errCorreo != null) errores.append("- ").append(errCorreo).append("\n");
 
-            String errPass = Validador.validarPassword(contrasena);
-            if (errPass != null) errores.append("- ").append(errPass).append("\n");
+            //String errPass = Validador.validarPassword(contrasena);
+            //if (errPass != null) errores.append("- ").append(errPass).append("\n");
 
             if (errores.length() > 0) {
                 barraDeProgreso.setVisibility(View.GONE);
@@ -86,8 +87,9 @@ public class ActividadLogin extends AppCompatActivity {
 
             new Thread(() -> {
                 try {
+                    String ip = Configuracion.obtenerIP(getApplicationContext());
                     ManagedChannel channel = ManagedChannelBuilder
-                            .forAddress("192.168.0.108", 50051)
+                            .forAddress(ip, 50051)
                             .usePlaintext()
                             .build();
 
@@ -135,7 +137,24 @@ public class ActividadLogin extends AppCompatActivity {
                             finish();
 
                         } else {
-                            Toast.makeText(this, "Error: " + response.getMensaje(), Toast.LENGTH_SHORT).show();
+                            String mensajeError = response.getMensaje();
+                            if (mensajeError != null && !mensajeError.isEmpty()) {
+                                Toast.makeText(this, mensajeError, Toast.LENGTH_SHORT).show();
+                            } else {
+                                boolean estaConectado = false;
+
+                                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+                                if (connectivityManager != null) {
+                                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                                    estaConectado = networkInfo != null && networkInfo.isConnected();
+                                }
+
+                                if (estaConectado) {
+                                    Toast.makeText(this, "Ocurrió un problema con el servidor", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(this, "Sin conexión a Internet. Verifica tu red.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
                         }
                     });
 
@@ -166,10 +185,11 @@ public class ActividadLogin extends AppCompatActivity {
 
     public void probarConexionServidor() {
         new Thread(() -> {
+            String ip = Configuracion.obtenerIP(getApplicationContext());
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder()
-                    .url("http://192.168.100.28:3000/api/usuarios")
+                    .url("http://192.168.56.151:3000/api/usuarios")
                     .build();
 
             try {

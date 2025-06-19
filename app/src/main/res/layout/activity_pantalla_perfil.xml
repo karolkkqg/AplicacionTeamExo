@@ -126,6 +126,21 @@
                 android:minHeight="0dp"
                 android:minWidth="0dp"
                 android:stateListAnimator="@null" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCerrarSesion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cerrar sesión"
+                android:textColor="#4B0055"
+                android:textAllCaps="false"
+                android:background="@drawable/boton_morado_borde"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:stateListAnimator="@null"
+                android:layout_marginTop="15dp" />
         </LinearLayout>
     </LinearLayout>
 
