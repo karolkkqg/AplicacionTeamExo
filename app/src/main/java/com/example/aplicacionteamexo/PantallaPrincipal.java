@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.aplicacionteamexo.data.modelo.comentario.Comentario;
 import com.example.aplicacionteamexo.data.modelo.comentario.ComentarioRegistro;
 import com.example.aplicacionteamexo.data.modelo.publicacion.Publicacion;
+import com.example.aplicacionteamexo.data.modelo.publicacion.PublicacionConRecurso;
 import com.example.aplicacionteamexo.data.repositorio.ComentarioRepository;
 import com.example.aplicacionteamexo.data.repositorio.PublicacionRepository;
 import com.example.aplicacionteamexo.utilidades.OnPublicacionInteractionListener;
@@ -26,6 +27,7 @@ import com.example.aplicacionteamexo.utilidades.PublicacionAdapter;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -35,13 +37,14 @@ import retrofit2.Response;
 
 public class PantallaPrincipal extends AppCompatActivity implements OnPublicacionInteractionListener{
 
-    private PublicacionAdapter adapter;
-    private List<Publicacion> lista;
+    private PublicacionAdapter publicacionAdapter;
+    private List<PublicacionConRecurso> listaPublicaciones;
     private boolean esModerador;
     private PublicacionRepository publicacionRepository;
-
-    private List<Publicacion> listaPublicaciones;
     private SharedPreferences sharedPreferences;
+    private RecyclerView recyclerView;
+
+    private List<PublicacionConRecurso> listaPublicacionesOriginal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,22 +52,13 @@ public class PantallaPrincipal extends AppCompatActivity implements OnPublicacio
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pantalla_principal);
 
-        publicacionRepository = new PublicacionRepository();
-
-        ImageButton btnFiltro = findViewById(R.id.btn_filtro);
-        btnFiltro.setOnClickListener(v -> mostrarMenuBottomSheet());
-
-        RecyclerView recyclerView = findViewById(R.id.recyclerViewPosts);
+        recyclerView = findViewById(R.id.recyclerViewPosts); // Usar variable de clase
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        lista = cargarPosts(); // Datos iniciales (puedes reemplazar con llamada a API)
 
         String rol = getSharedPreferences("auth", MODE_PRIVATE).getString("rol", "fan");
         esModerador = rol.equals("moderador");
 
-        // Inicialización del adapter con la implementación de la interfaz
-        adapter = new PublicacionAdapter(lista, esModerador, this, this);
-        recyclerView.setAdapter(adapter);
+        obtenerPublicacionesDesdeBackend();
 
         ImageButton btnPerfil = findViewById(R.id.btn_perfil);
         btnPerfil.setOnClickListener(v -> {
@@ -73,132 +67,59 @@ public class PantallaPrincipal extends AppCompatActivity implements OnPublicacio
             startActivity(intent);
         });
 
-        configurarBusqueda();
-    }
+        ImageButton btnFiltro = findViewById(R.id.btn_filtro);
+        btnFiltro.setOnClickListener(v -> mostrarMenuBottomSheet());
 
-    private void configurarBusqueda() {
         EditText editTextSearch = findViewById(R.id.editTextSearch);
+
         editTextSearch.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                buscarPublicaciones(v.getText().toString());
-                return true;
+                String query = editTextSearch.getText().toString().trim();
+                if (!query.isEmpty()) {
+                    Intent intent = new Intent(PantallaPrincipal.this, ActividadBusqueda.class);
+                    intent.putExtra("query", query);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(PantallaPrincipal.this, "Ingrese texto para buscar", Toast.LENGTH_SHORT).show();
+                }
+                return true; // Evento consumido
             }
             return false;
         });
+
+
     }
 
-    private void buscarPublicaciones(String query) {
-        if (!query.isEmpty()) {
-            publicacionRepository.buscarPublicaciones(query, "activo", 10, 1)
-                    .enqueue(new retrofit2.Callback<List<Publicacion>>() {
-                        @Override
-                        public void onResponse(Call<List<Publicacion>> call, Response<List<Publicacion>> response) {
-                            if (response.isSuccessful() && response.body() != null) {
-                                lista.clear();
-                                lista.addAll(response.body());
-                                adapter.notifyDataSetChanged();
-                            }
-                        }
+    private void obtenerPublicacionesDesdeBackend() {
+        PublicacionRepository publicacionRepository = new PublicacionRepository();
 
-                        @Override
-                        public void onFailure(Call<List<Publicacion>> call, Throwable t) {
-                            Toast.makeText(PantallaPrincipal.this, "Error al buscar", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
-    }
-
-    // Implementación de la interfaz OnPublicacionInteractionListener
-
-    public void onEliminarClick(Publicacion publicacion) {
-        new android.app.AlertDialog.Builder(this)
-                .setTitle("Eliminar publicación")
-                .setMessage("¿Estás seguro de eliminar esta publicación?")
-                .setPositiveButton("Eliminar", (dialog, which) -> {
-                    eliminarPublicacionAPI(publicacion.getIdentificador());
-                })
-                .setNegativeButton("Cancelar", null)
-                .show();
-    }
-
-
-    public void onLikeClick(Publicacion publicacion) {
-        Toast.makeText(this, "Like a: " + publicacion.getTitulo(), Toast.LENGTH_SHORT).show();
-    }
-
-
-    public void onReaccionClick(Publicacion publicacion, String tipoReaccion) {
-        Toast.makeText(this, "Reacción " + tipoReaccion + " a: " + publicacion.getTitulo(), Toast.LENGTH_SHORT).show();
-    }
-
-
-    public void onComentarioSubmit(Publicacion publicacion, String comentario) {
-        int usuarioId = sharedPreferences.getInt("usuarioId", -1);
-        int comentarioId = new Random().nextInt(1000000);
-
-        ComentarioRegistro solicitud = new ComentarioRegistro(
-                comentarioId,
-                publicacion.getIdentificador(),
-                usuarioId,
-                comentario
-        );
-
-        ComentarioRepository comentarioRepo = new ComentarioRepository();
-        comentarioRepo.crearComentario(solicitud, new Callback<Comentario>() {
+        publicacionRepository.obtenerPublicacionesConRecursos().enqueue(new Callback<List<PublicacionConRecurso>>() {
             @Override
-            public void onResponse(Call<Comentario> call, Response<Comentario> response) {
+            public void onResponse(Call<List<PublicacionConRecurso>> call, Response<List<PublicacionConRecurso>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(PantallaPrincipal.this, "Comentario publicado", Toast.LENGTH_SHORT).show();
+                    listaPublicacionesOriginal = response.body(); // 👈 Guarda lista completa
+                    List<PublicacionConRecurso> publicaciones = new ArrayList<>(listaPublicacionesOriginal);
 
-                    // Agregar comentario localmente en el modelo
-                    publicacion.agregarComentarioTexto(response.body().getTexto());
+                    Collections.sort(publicaciones, (p1, p2) -> p2.getFechaCreacion().compareTo(p1.getFechaCreacion()));
 
-                    // Notificar al adaptador para que se actualice el ítem
-                    adapter.notifyItemChanged(listaPublicaciones.indexOf(publicacion));
+                    PublicacionAdapter adapter = new PublicacionAdapter(publicaciones, esModerador, PantallaPrincipal.this);
+                    recyclerView.setAdapter(adapter);
                 } else {
-                    Toast.makeText(PantallaPrincipal.this, "Error al publicar", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PantallaPrincipal.this, "Error al obtener publicaciones", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<Comentario> call, Throwable t) {
-                Log.e("Comentario", "Error al comentar", t);
-                Toast.makeText(PantallaPrincipal.this, "Error al comentar", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<List<PublicacionConRecurso>> call, Throwable t) {
+                Toast.makeText(PantallaPrincipal.this, "Error de red", Toast.LENGTH_SHORT).show();
+                Log.e("PantallaPrincipal", "Error al cargar publicaciones", t);
             }
         });
     }
 
-
     public void onPublicacionClick(Publicacion publicacion) {
-        // Abrir actividad de detalle
-        Intent intent = new Intent(this, PantallaPublicacion.class);
-        intent.putExtra("publicacion_id", publicacion.getIdentificador());
-        startActivity(intent);
-    }
+        // PARA EDITAR LA PUBLICACION
 
-    private void eliminarPublicacionAPI(int publicacionId) {
-        publicacionRepository.eliminarPublicacion(publicacionId)
-                .enqueue(new retrofit2.Callback<Void>() {
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        if (response.isSuccessful()) {
-                            // Eliminar de la lista local
-                            for (int i = 0; i < lista.size(); i++) {
-                                if (lista.get(i).getIdentificador() == publicacionId) {
-                                    lista.remove(i);
-                                    adapter.notifyItemRemoved(i);
-                                    break;
-                                }
-                            }
-                            Toast.makeText(PantallaPrincipal.this, "Publicación eliminada", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        Toast.makeText(PantallaPrincipal.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
-                    }
-                });
     }
 
     private void mostrarMenuBottomSheet() {
@@ -223,28 +144,42 @@ public class PantallaPrincipal extends AppCompatActivity implements OnPublicacio
         }
 
         optionVideos.setOnClickListener(v -> {
-            Toast.makeText(this, "Filtrar Videos", Toast.LENGTH_SHORT).show();
+            filtrarPorTipoRecurso("Video");
             bottomSheetDialog.dismiss();
         });
 
-        optionUsuarios.setOnClickListener(v -> {
-            Toast.makeText(this, "Lista de Usuarios", Toast.LENGTH_SHORT).show();
+        optionImagenes.setOnClickListener(v -> {
+            filtrarPorTipoRecurso("Foto");
             bottomSheetDialog.dismiss();
         });
+
+        optionAudios.setOnClickListener(v -> {
+            filtrarPorTipoRecurso("Audio");
+            bottomSheetDialog.dismiss();
+        });
+
 
         bottomSheetDialog.show();
     }
 
-    private List<Publicacion> cargarPosts() {
-        List<Publicacion> lista = new ArrayList<>();
-        lista.add(new Publicacion(1, "Título 1", "Publicado", "Contenido 1", 123, "2024-06-01"));
-        lista.add(new Publicacion(2, "Título 2", "Borrador", "Contenido 2", 456, "2024-06-02"));
-        return lista;
+     // guarda todas las publicaciones
+
+    private void filtrarPorTipoRecurso(String tipo) {
+        if (listaPublicacionesOriginal == null) return;
+
+        List<PublicacionConRecurso> filtradas = new ArrayList<>();
+
+        for (PublicacionConRecurso pub : listaPublicacionesOriginal) {
+            if (pub.getRecurso() != null && tipo.equals(pub.getRecurso().getTipo())) {
+                filtradas.add(pub);
+            }
+        }
+
+        Collections.sort(filtradas, (p1, p2) -> p2.getFechaCreacion().compareTo(p1.getFechaCreacion()));
+
+        PublicacionAdapter adapter = new PublicacionAdapter(filtradas, esModerador, PantallaPrincipal.this);
+        recyclerView.setAdapter(adapter);
     }
 
-    private void eliminarPost(Publicacion post) {
-        Toast.makeText(this, "Eliminado: " + post.getContenido(), Toast.LENGTH_SHORT).show();
-        // Aquí podrías también eliminar de base de datos o notificar al servidor
-    }
 }
 

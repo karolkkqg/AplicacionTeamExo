@@ -1,17 +1,12 @@
 package com.example.aplicacionteamexo.data.modelo.reaccion;
 
 public class ReaccionRespuesta {
-    public int reaccionId;
-    public String tipo;
-    public int publicacionId;
-    public int usuarioId;
-    public String nombreUsuario;
+    private String msg;
+    private Reaccion reaccion;
 
-    public ReaccionRespuesta(int reaccionId, String tipo, int publicacionId, int usuarioId, String nombreUsuario) {
-        this.reaccionId = reaccionId;
-        this.tipo = tipo;
-        this.publicacionId = publicacionId;
-        this.usuarioId = usuarioId;
-        this.nombreUsuario = nombreUsuario;
-    }
+    public String getMsg() { return msg; }
+    public void setMsg(String msg) { this.msg = msg; }
+
+    public Reaccion getReaccion() { return reaccion; }
+    public void setReaccion(Reaccion reaccion) { this.reaccion = reaccion; }
 }

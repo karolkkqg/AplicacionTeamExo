@@ -1,23 +1,18 @@
 package com.example.aplicacionteamexo.data.modelo.reaccion;
 
 public class ReaccionRegistro {
-    public int reaccionId;
     public String tipo;
     public int publicacionId;
     public int usuarioId;
     public String nombreUsuario;
 
-    public ReaccionRegistro(int reaccionId, String tipo, int publicacionId, int usuarioId, String nombreUsuario) {
-        this.reaccionId = reaccionId;
+    public ReaccionRegistro(String tipo, int publicacionId, int usuarioId, String nombreUsuario) {
         this.tipo = tipo;
         this.publicacionId = publicacionId;
         this.usuarioId = usuarioId;
         this.nombreUsuario = nombreUsuario;
     }
 
-    public int getReaccionId() {
-        return reaccionId;
-    }
 
     public String getTipo() {
         return tipo;
@@ -36,10 +31,6 @@ public class ReaccionRegistro {
     }
 
     // --- Setters ---
-
-    public void setReaccionId(int reaccionId) {
-        this.reaccionId = reaccionId;
-    }
 
     public void setTipo(String tipo) {
         this.tipo = tipo;

@@ -17,7 +17,7 @@ public class Publicacion {
     private String tipoReaccionUsuarioActual;
 
 
-    private String comentariosTexto = "";
+    private String comentariosTexto;
 
     // Constructor
     public Publicacion(int identificador, String titulo, String estado, String contenido, int usuarioId, String fechaCreacion) {
@@ -33,26 +33,32 @@ public class Publicacion {
     public int getIdentificador() {
         return identificador;
     }
+    public void setIdentificador(int identificador) { this.identificador = identificador; }
 
     public String getTitulo() {
         return titulo;
     }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
 
     public String getEstado() {
         return estado;
     }
+    public void setEstado(String estado) { this.estado = estado; }
 
     public String getContenido() {
         return contenido;
     }
+    public void setContenido(String contenido) { this.contenido = contenido; }
 
     public int getUsuarioId() {
         return usuarioId;
     }
+    public void setUsuarioId(int usuarioId) { this.usuarioId = usuarioId; }
 
     public String getFechaCreacion() {
         return fechaCreacion;
     }
+    public void setFechaCreacion(String fechaCreacion) { this.fechaCreacion = fechaCreacion; }
 
     // Reacciones relacionadas
     public List<ReaccionRespuesta> getReacciones() {
@@ -81,6 +87,10 @@ public class Publicacion {
 
     public String getComentariosTexto() {
         return comentariosTexto;
+    }
+
+    public void setComentariosTexto(String comentariosTexto) {
+        this.comentariosTexto = comentariosTexto;
     }
 
     public void agregarComentarioTexto(String nuevoComentario) {

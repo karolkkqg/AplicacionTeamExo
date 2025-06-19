@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:background="#F5F5F5">
+
+    <!-- Contenedor del texto del comentario -->
+    <LinearLayout
+        android:id="@+id/layout_textos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/btn_menu_comentario"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp">
+
+        <TextView
+            android:id="@+id/tv_nombre_usuario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Usuario"
+            android:textStyle="bold"
+            android:textColor="#7B1FA2"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_texto_comentario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Comentario de prueba"
+            android:textColor="#000"
+            android:layout_marginTop="2dp"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- Botón de menú (tres puntos) -->
+    <ImageButton
+        android:id="@+id/btn_menu_comentario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_menu_vert"
+        android:contentDescription="Menú de opciones"
+        android:visibility="gone" />
+</RelativeLayout>

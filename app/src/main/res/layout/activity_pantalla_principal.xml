@@ -12,16 +12,17 @@
     <LinearLayout
         android:id="@+id/top_bar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="74dp"
         android:background="#4B0055"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:paddingTop="28dp"
+        android:padding="16dp" >
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="3dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:gravity="center"
             android:text="Inicio"
             android:textColor="@android:color/white"
@@ -32,9 +33,9 @@
             android:id="@+id/btn_filtro"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_filtro_blanco"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Filtrar" />
+            android:contentDescription="Filtrar"
+            android:src="@drawable/ic_filtro_blanco" />
     </LinearLayout>
 
     <!-- Contenido central (puedes expandir aquí) -->

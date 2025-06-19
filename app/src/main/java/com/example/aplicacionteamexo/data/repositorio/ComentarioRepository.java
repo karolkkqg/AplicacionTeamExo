@@ -4,6 +4,8 @@ import com.example.aplicacionteamexo.data.api.ComentarioAPI;
 import com.example.aplicacionteamexo.data.modelo.comentario.Comentario;
 import com.example.aplicacionteamexo.data.modelo.comentario.ComentarioRegistro;
 import com.example.aplicacionteamexo.data.network.RetrofitClient;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ComentarioRepository {
     private ComentarioAPI api;
@@ -30,14 +33,37 @@ public class ComentarioRepository {
     }
 
     public void actualizarComentario(int comentarioId, String nuevoTexto, Callback<Comentario> callback) {
-        Map<String, String> body = new HashMap<>();
-        body.put("texto", nuevoTexto);
-        Call<Comentario> call = api.actualizarComentario(comentarioId, body);
-        call.enqueue(callback);
+        Comentario comentario = new Comentario();
+        comentario.setTexto(nuevoTexto);  // Solo mandamos el campo necesario
+
+        Call<JsonObject> call = api.actualizarComentario(comentarioId, comentario);
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    JsonObject json = response.body().getAsJsonObject("comentario");
+
+                    if (json != null) {
+                        Comentario comentarioActualizado = new Gson().fromJson(json, Comentario.class);
+                        callback.onResponse(null, Response.success(comentarioActualizado));
+                    } else {
+                        callback.onFailure(null, new Throwable("Comentario nulo"));
+                    }
+                } else {
+                    callback.onFailure(null, new Throwable("Respuesta no exitosa"));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                callback.onFailure(null, t);
+            }
+        });
     }
 
-    public void eliminarComentario(int comentarioId, Callback<Void> callback) {
-        Call<Void> call = api.eliminarComentario(comentarioId);
+
+    public void eliminarComentario(int comentarioId, Callback<Comentario> callback) {
+        Call<Comentario> call = api.eliminarComentario(comentarioId);
         call.enqueue(callback);
     }
 }

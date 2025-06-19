@@ -118,7 +118,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@null"
-                android:src="@drawable/ic_video_morado"
+                android:src="@drawable/ic_video"
                 android:contentDescription="Adjuntar video" />
 
             <ImageButton
@@ -127,7 +127,7 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="8dp"
                 android:background="@null"
-                android:src="@drawable/ic_imagen_morado"
+                android:src="@drawable/placeholder_image"
                 android:contentDescription="Adjuntar imagen" />
 
             <ImageButton
@@ -136,7 +136,7 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="8dp"
                 android:background="@null"
-                android:src="@drawable/ic_audio_morado"
+                android:src="@drawable/ic_audio"
                 android:contentDescription="Adjuntar audio" />
         </LinearLayout>
     </LinearLayout>

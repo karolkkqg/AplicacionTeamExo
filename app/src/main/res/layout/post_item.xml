@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     android:elevation="4dp"
-    android:background="@android:color/white">
+    android:background="#FFFFFF">
 
 
 
@@ -15,23 +15,117 @@
         android:padding="8dp">
 
         <!-- Título de la publicación -->
-        <TextView
-            android:id="@+id/txt_titulo"
+        <!-- Encabezado: Título + Botón Descargar -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Título de ejemplo"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:paddingBottom="4dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="4dp">
+
+            <TextView
+                android:id="@+id/txt_titulo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Título de ejemplo"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black" />
+
+            <ImageButton
+                android:id="@+id/btn_descargar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Descargar"
+                android:padding="4dp"
+                android:src="@drawable/ic_descargar" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/txt_contenido"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Este es el contenido de ejemplo de la publicación."
+            android:textSize="16sp"
+            android:paddingBottom="6dp"
             android:textColor="@android:color/black" />
 
         <!-- Multimedia (imagen, audio o video) -->
         <ImageView
             android:id="@+id/img_multimedia"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
             android:src="@drawable/ic_launcher_background" />
+
+        <!-- Reproductor de video -->
+        <VideoView
+            android:id="@+id/videoView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:visibility="gone"
+            android:layout_marginTop="8dp" />
+
+        <LinearLayout
+            android:id="@+id/videoControls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:visibility="gone"
+            android:layout_marginTop="4dp">
+
+            <ImageButton
+                android:id="@+id/btnPlayVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_play"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Reproducir video" />
+
+            <ImageButton
+                android:id="@+id/btnPauseVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_pause"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Pausar video" />
+        </LinearLayout>
+
+
+        <!-- Reproductor de audio -->
+        <LinearLayout
+            android:id="@+id/audioLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/btnPlayAudio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_play"
+                android:contentDescription="Reproducir audio"
+                android:background="@null"
+                android:padding="8dp" />
+
+            <ImageButton
+                android:id="@+id/btnPauseAudio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_pause"
+                android:contentDescription="Pausar audio"
+                android:background="@null"
+                android:padding="8dp" />
+        </LinearLayout>
+
 
         <!-- Reacciones -->
         <LinearLayout
@@ -41,46 +135,83 @@
             android:gravity="end"
             android:paddingTop="4dp">
 
-            <ImageButton
-                android:id="@+id/btn_like"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Me gusta"
-                android:scaleType="centerInside"
-                android:padding="8dp"
-                android:src="@drawable/ic_like" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginEnd="8dp">
+                <ImageButton
+                    android:id="@+id/btn_like"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Me gusta"
+                    android:scaleType="centerInside"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_like" />
+                <TextView
+                    android:id="@+id/txt_likes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="14sp"
+                    android:layout_gravity="center_vertical"
+                    android:paddingStart="4dp"
+                    android:textColor="@android:color/black" />
+            </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/btn_emoji_heart"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Corazón"
-                android:scaleType="centerInside"
-                android:padding="8dp"
-                android:src="@drawable/ic_emoji_corazon" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginEnd="8dp">
+                <ImageButton
+                    android:id="@+id/btn_emoji_heart"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Corazón"
+                    android:scaleType="centerInside"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_emoji_corazon" />
+                <TextView
+                    android:id="@+id/txt_emojis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="14sp"
+                    android:layout_gravity="center_vertical"
+                    android:paddingStart="4dp"
+                    android:textColor="@android:color/black" />
+            </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/btn_emoji_broken"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Corazón roto"
-                android:scaleType="centerInside"
-                android:padding="8dp"
-                android:src="@drawable/ic_emoji_corazon_roto" />
-
-            <ImageButton
-                android:id="@+id/btn_dislike"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="No me gusta"
-                android:scaleType="centerInside"
-                android:padding="8dp"
-                android:src="@drawable/ic_dislike" />
-
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginEnd="8dp">
+                <ImageButton
+                    android:id="@+id/btn_dislike"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="No me gusta"
+                    android:scaleType="centerInside"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_dislike" />
+                <TextView
+                    android:id="@+id/txt_dislikes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="14sp"
+                    android:layout_gravity="center_vertical"
+                    android:paddingStart="4dp"
+                    android:textColor="@android:color/black" />
+            </LinearLayout>
 
             <ImageButton
                 android:id="@+id/btn_delete"
@@ -89,30 +220,45 @@
                 android:src="@drawable/ic_eliminar"
                 android:contentDescription="Eliminar"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:layout_gravity="end"
+                android:layout_gravity="center_vertical"
                 android:visibility="gone"/> <!-- Solo visible si es moderador -->
-
-
 
         </LinearLayout>
 
         <!-- Comentarios -->
-        <EditText
-            android:id="@+id/et_comentario"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:hint="Escribe un comentario..."
-            android:inputType="text" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/tv_comentarios"
+            <EditText
+                android:id="@+id/et_comentario"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:hint="Escribe un comentario..."
+                android:inputType="text" />
+
+            <ImageButton
+                android:id="@+id/btn_confirmar_comentario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_confirmar"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Confirmar comentario"
+                android:padding="8dp"/>
+        </LinearLayout>
+
+        <!-- Comentarios (lista) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_comentarios"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sin comentarios"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"
-            android:paddingTop="8dp"/>
+            android:nestedScrollingEnabled="false"
+            android:layout_marginTop="8dp"/>
+
 
 
     </LinearLayout>

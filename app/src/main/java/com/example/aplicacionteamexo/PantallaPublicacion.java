@@ -24,9 +24,7 @@ import com.example.aplicacionteamexo.data.modelo.recurso.RecursoRegistro;
 import com.example.aplicacionteamexo.data.modelo.recurso.RecursoRespuesta;
 import com.example.aplicacionteamexo.data.repositorio.PublicacionRepository;
 import com.example.aplicacionteamexo.data.repositorio.RecursoRepository;
-import com.example.aplicacionteamexo.grpc.recurso.CrearRecursoRequest;
-import com.example.aplicacionteamexo.grpc.recurso.CrearRecursoResponse;
-import com.example.aplicacionteamexo.grpc.recurso.RecursoServiceGrpc;
+
 
 import org.apache.commons.io.IOUtils;
 
@@ -35,6 +33,8 @@ import java.io.InputStream;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import recurso.Recurso;
+import recurso.RecursoServiceGrpc;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -127,7 +127,7 @@ public class PantallaPublicacion extends AppCompatActivity {
                 RecursoServiceGrpc.RecursoServiceBlockingStub stub =
                         RecursoServiceGrpc.newBlockingStub(channel);
 
-                CrearRecursoRequest.Builder builder = CrearRecursoRequest.newBuilder()
+                Recurso.CrearRecursoRequest.Builder builder = Recurso.CrearRecursoRequest.newBuilder()
                         .setTipo(tipoArchivo)
                         .setIdentificador((int) (Math.random() * 100000)) // Puedes usar uno real o aleatorio
                         .setFormato(obtenerFormato(archivoUri))
@@ -142,7 +142,7 @@ public class PantallaPublicacion extends AppCompatActivity {
                     builder.setDuracion(obtenerDuracion(archivoUri));
                 }
 
-                CrearRecursoResponse response = stub.crearRecurso(builder.build());
+                Recurso.CrearRecursoResponse response = stub.crearRecurso(builder.build());
 
                 runOnUiThread(() -> {
                     if (response.getExito()) {
